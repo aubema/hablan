@@ -70,21 +70,6 @@ do time1=`date +%s` # initial time
         if [ `ls /dev | grep $gpsport`  ] 
         then echo "GPS look present."
              globalpos
-        else /bin/echo "GPS not present: using coords. from localconfig"
-             #
-             #  reading longitude and latitude from localconfig
-             #
-             if [ `grep -c " " /home/sand/localconfig` -ne 0 ]
-             then /bin/grep Longitude /home/sand/localconfig > /root/ligne.tmp
-                  read bidon lon bidon < /root/ligne.tmp
-                  /bin/grep Latitude /home/sand/localconfig > /root/ligne.tmp
-                  read bidon lat bidon < /root/ligne.tmp
-                  /bin/grep Altitude /home/sand/localconfig > /root/ligne.tmp
-                  read bidon alt bidon < /root/ligne.tmp
-             else 
-                  echo "Please put something in /home/sand/localconfig and restart observe-sqm-stepper.bash."
-             fi
-             # /bin/echo "Latitude:" $lat ", Longitude:" $lon
         fi
    else  echo "GPS mode off"
    fi
