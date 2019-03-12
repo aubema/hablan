@@ -25,6 +25,7 @@ globalpos () {
 #
 #    reading 10 gps transactions
 #
+#
      /usr/bin/gpspipe -w -n 10 > /root/coords.tmp &
      sleep 1
      killall -s SIGINT gpspipe 
