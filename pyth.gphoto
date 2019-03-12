@@ -1,0 +1,38 @@
+from time import sleep
+from datetime import datetime
+from sh import gphoto2 as gp
+import signal, os, subprocess
+import sys
+
+def kill():
+    p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+    out, err = p.communicate()
+    for line in out.splitlines():
+        if b'gvfsd-gphoto2' in line:
+            xkill = int(line.split(None,1)[0])
+            os.kill(xkill, signal.SIGKILL)
+
+
+capture50 = ["--port usb:001,041", "--capture-image-and-download", "--filename", "%Y%m%d-%H:%M:%S" + "(50mm)" + ".arw"]
+capture8 = ["--port usb:001,037", "--capture-image-and-download", "--filename", "%Y%m%d-%H:%M:%S" + "(8mm)" + ".arw"]
+temps = datetime.now().strftime ("%Y-%m-%d %H:%M:%S")
+
+i=0
+
+def prendre_photo(i):
+    gp(capture50)
+    sleep(2)
+    gp(capture8)  
+    sleep(5)
+    
+
+kill()
+while i!=4:
+    prendre_photo(i)
+    i=i+1
+
+sys.exit
+
+
+
+    
