@@ -98,12 +98,12 @@ do time1=`date +%s` # initial time
    # writing into log file
    echo $time $lat $lon $alt $nomfich50 $nomfich8 >> /var/www/html/data/$y/$mo/$nomfich.log
    # acquisition de l'image 50mm
-   gphoto2 --capture-image-and-download --filename %Y-%m-%d-%H-%M-%S(50mm).arw
+   gphoto2 --capture-image-and-download --filename $datetime"_50mm.arw"
    # rename image 50mm
    mv NOMINCONNU $nomfich50
 
    # acquisition de l'image 8mm
-   gphoto2 --capture-image-and-download --filename %Y-%m-%d-%H-%M-%S(8mm).arw
+   gphoto2 --capture-image-and-download --filename $datetime"_8mm.arw"
    # rename image 8mm
    mv NOMINCONNU $nomfich8
 
