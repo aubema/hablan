@@ -84,8 +84,8 @@ do time1=`date +%s` # initial time
    nomfich=$nomfich".txt"
    time=`date +%Y-%m-%d" "%H:%M:%S`
    datetime=`date +%Y-%m-%d-%H-%M-%S`
-   nomfich50=$datetime_50mm.raw  # CHANGER .raw par la bonne extension
-   nomfich8=$datetime_8mm.raw    # CHANGER .raw par la bonne extension
+   nomfich50=$datetime_50mm.arw  # CHANGER .raw par la bonne extension
+   nomfich8=$datetime_8mm.arw    # CHANGER .raw par la bonne extension
    y=`date +%Y`
    mo=`date +%m`
    d=`date +%d`
@@ -98,12 +98,12 @@ do time1=`date +%s` # initial time
    # writing into log file
    echo $time $lat $lon $alt $nomfich50 $nomfich8 >> /var/www/html/data/$y/$mo/$nomfich.log
    # acquisition de l'image 50mm
-   gphoto2 --capture-image-and-download --filename $datetime"_50mm.arw"
+   gphoto2 --capture-image-and-download --filename $nomfich50
    # rename image 50mm
    mv NOMINCONNU $nomfich50
 
    # acquisition de l'image 8mm
-   gphoto2 --capture-image-and-download --filename $datetime"_8mm.arw"
+   gphoto2 --capture-image-and-download --filename $nomfich8
    # rename image 8mm
    mv NOMINCONNU $nomfich8
 
