@@ -48,6 +48,7 @@ globalpos () {
 # ==================================
 # main
 # activate gps option 0=off 1=on
+serial8mm="00000000000000003282827005111659"
 gpsf=1
 gpsport="ttyACM0"
 nobs=9999  		# number of images to acquire; if 9999 then infinity
@@ -83,12 +84,14 @@ read bidon port2 bidon < bidon.tmp
 
 echo $port1 $port2
 
-# identifier le port de la 8mm
-if [ gphoto2 --port $port1 --list-folders | grep fisheye ]
-then port8mm=$port2
+# identifier le port de la 8mm grace au serial number
+gphoto2 --port $port1 -summary | grep serial > bidon.tmp
+read bidon bidon serial bidon < bidon.tmp
+if [ $serial == $serial8mm ]
+then port8mm=$port1
      port50mm=$port1
-else port8mm=$port1
-     port50mm=$port2
+else port8mm=$port2
+     port50mm=$port1
 fi
 
 
