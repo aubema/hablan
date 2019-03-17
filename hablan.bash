@@ -55,21 +55,33 @@ nobs=9999  		# number of images to acquire; if 9999 then infinity
 # main loop
 #
 # wait for the gps startup
-echo "Waiting 20 seconds for the gps startup"
-/bin/sleep 20
+echo "Waiting 10 seconds for the gps startup"
+/bin/sleep 10
 # reset the gps
 killall gpsd
+echo "Reset the gps"
 gpsctl -D 5 -x "\xB5\x62\x06\x04\x04\x00\xFF\x87\x00\x00\x94\xF5" /dev/$gpsport
 # set the gps to airborne < 1g mode
+echo "Set gps in airborne mode"
 gpsctl -D 5 -x "\xB5\x62\x06\x24\x24\x00\xFF\xFF\x06\x03\x00\x00\x00\x00\x10\x27\x00\x00\x05\x00\xFA\x00\xFA\x00\x64\x00\x2C\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x16\xDC" /dev/$gpsport
+echo "Start gpsd service"
 service gpsd start
 #
 # trouver les ports sur lesquels les cameras sont connectes
+echo "Looking for cameras ports"
 gphoto2 --auto-detect > camera-list.tmp
+camconnected=`grep -c "" camera-list.tmp`
+if [ $camconnected -ne "4" ]
+then echo "Not enough cameras attached" $camconnected
+     echo "Please check cables"
+     exit 2
+fi
 head -3 camera-list.tmp | tail -1 > bidon.tmp
 read bidon port1 bidon < bidon.tmp
 head -4 camera-list.tmp | tail -1 > bidon.tmp
 read bidon port2 bidon < bidon.tmp
+
+echo $port1 $port2
 
 # identifier le port de la 8mm
 if [ gphoto2 --port $port1 --list-folders | grep fisheye ]
@@ -118,6 +130,7 @@ do time1=`date +%s` # initial time
    # writing into log file
    echo $time $lat $lon $alt $nomfich50 $nomfich8 >> /var/www/html/data/$y/$mo/$nomfich.log
    # acquisition de l'image 50mm
+   echo "Taking 50mm shot"
    gphoto2 --port $port50mm --capture-image-and-download --filename $nomfich50
    # rename image 50mm
 
@@ -126,6 +139,7 @@ exit 1
    mv NOMINCONNU $nomfich50
 
    # acquisition de l'image 8mm
+   echo "Taking 8mm shot"
    gphoto2 --port $port8mm --capture-image-and-download --filename $nomfich8
    # rename image 8mm
    
