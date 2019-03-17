@@ -60,6 +60,23 @@ nobs=9999  		# number of images to acquire; if 9999 then infinity
 gpsctl -D 5 -x "\xB5\x62\x06\x04\x04\x00\xFF\x87\x00\x00\x94\xF5" /dev/$gpsport
 # set the gps to airborne < 1g mode
 gpsctl -D 5 -x "\xB5\x62\x06\x24\x24\x00\xFF\xFF\x06\x03\x00\x00\x00\x00\x10\x27\x00\x00\x05\x00\xFA\x00\xFA\x00\x64\x00\x2C\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x16\xDC" /dev/$gpsport
+#
+# trouver les ports sur lesquels les cameras sont connectes
+gphoto2 --auto-detect > camera-list.tmp
+head -3 camera-list.tmp | tail -1 > bidon.tmp
+read bidon port1 bidon < bidon.tmp
+head -4 camera-list.tmp | tail -1 > bidon.tmp
+read bidon port2 bidon < bidon.tmp
+
+# identifier le port de la 8mm
+if [ gphoto2 --port $port1 --list-folders | grep fisheye ]
+then port8mm=$port2
+     port50mm=$port1
+else port8mm=$port1
+     port50mm=$port2
+fi
+
+
 i=0
 while [ $i -lt $nobs ]
 do time1=`date +%s` # initial time
@@ -98,20 +115,26 @@ do time1=`date +%s` # initial time
    # writing into log file
    echo $time $lat $lon $alt $nomfich50 $nomfich8 >> /var/www/html/data/$y/$mo/$nomfich.log
    # acquisition de l'image 50mm
-   gphoto2 --capture-image-and-download --filename $nomfich50
+   gphoto2 --port $port50mm --capture-image-and-download --filename $nomfich50
    # rename image 50mm
+
+exit 1
+
    mv NOMINCONNU $nomfich50
 
    # acquisition de l'image 8mm
-   gphoto2 --capture-image-and-download --filename $nomfich8
+   gphoto2 --port $port8mm --capture-image-and-download --filename $nomfich8
    # rename image 8mm
+   
+
+
    mv NOMINCONNU $nomfich8
 
    # backup images
    cp -f $nomfich50 /var/www/html/data/$y/$mo/$nomfich50
-   mv -f $nomfich50 /mnt/QQPART/$nomfich50
+   mv -f $nomfich50 /home/sand/backup/$nomfich50
    cp -f $nomfich8 /var/www/html/data/$y/$mo/$nomfich8
-   mv -f $nomfich8 /mnt/QQPART/$nomfich8
+   mv -f $nomfich8 /home/sand/backup/$nomfich8
 
    time2=`date +%s`
    let idle=20-time2+time1  # one measurement every 20 sec
