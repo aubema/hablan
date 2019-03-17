@@ -112,15 +112,19 @@ do time1=`date +%s` # initial time
    then let i=i+1 #   never ending loop
    fi
    n=0
-   nomfich=`date -u +"%Y-%m-%d"`
-   nomfich=$nomfich".txt"
-   time=`date +%Y-%m-%d" "%H:%M:%S`
-   datetime=`date +%Y-%m-%d-%H-%M-%S`
-   nomfich50=$datetime_50mm.arw  # CHANGER .raw par la bonne extension
-   nomfich8=$datetime_8mm.arw    # CHANGER .raw par la bonne extension
    y=`date +%Y`
    mo=`date +%m`
    d=`date +%d`
+   H=`date +%H`
+   M=`date +%M`
+   S=`date +%S`
+   nomfich=$y"-"$mo"-"$d
+   nomfich=$nomfich".txt"
+   time=$nomfich" "$H":"$M":"$S
+   datetime=$nomfich"_"$H"-"$M"-"$S
+   nomfich50=$datetime_50mm.arw  
+   nomfich8=$datetime_8mm.arw    
+
    if [ ! -d /var/www/html/data/$y ]
    then mkdir /var/www/html/data/$y
    fi
@@ -133,8 +137,6 @@ do time1=`date +%s` # initial time
    echo "Taking 50mm shot"
    gphoto2 --port $port50mm --capture-image-and-download --filename $nomfich50
 
-
-exit 1
 
    # acquisition de l'image 8mm
    echo "Taking 8mm shot"
