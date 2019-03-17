@@ -132,20 +132,14 @@ do time1=`date +%s` # initial time
    # acquisition de l'image 50mm
    echo "Taking 50mm shot"
    gphoto2 --port $port50mm --capture-image-and-download --filename $nomfich50
-   # rename image 50mm
+
 
 exit 1
-
-   mv NOMINCONNU $nomfich50
 
    # acquisition de l'image 8mm
    echo "Taking 8mm shot"
    gphoto2 --port $port8mm --capture-image-and-download --filename $nomfich8
-   # rename image 8mm
-   
 
-
-   mv NOMINCONNU $nomfich8
 
    # backup images
    cp -f $nomfich50 /var/www/html/data/$y/$mo/$nomfich50
