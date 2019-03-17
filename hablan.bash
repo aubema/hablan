@@ -55,11 +55,14 @@ nobs=9999  		# number of images to acquire; if 9999 then infinity
 # main loop
 #
 # wait for the gps startup
+echo "Waiting 20 seconds for the gps startup"
 /bin/sleep 20
 # reset the gps
+killall gpsd
 gpsctl -D 5 -x "\xB5\x62\x06\x04\x04\x00\xFF\x87\x00\x00\x94\xF5" /dev/$gpsport
 # set the gps to airborne < 1g mode
 gpsctl -D 5 -x "\xB5\x62\x06\x24\x24\x00\xFF\xFF\x06\x03\x00\x00\x00\x00\x10\x27\x00\x00\x05\x00\xFA\x00\xFA\x00\x64\x00\x2C\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x16\xDC" /dev/$gpsport
+service gpsd start
 #
 # trouver les ports sur lesquels les cameras sont connectes
 gphoto2 --auto-detect > camera-list.tmp
