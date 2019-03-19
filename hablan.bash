@@ -112,12 +112,9 @@ do time1=`date +%s` # initial time
    else  echo "GPS mode off"
    fi
    # lecture de la temperature et de l humidite
-   AdafruitDHT.py > bidon.tmp
-   /usr/bin/tail -1 bidon.tmp | sed 's/=/ /g'> /root/bidon1.tmp
-   grep Temp /root/bidon1.tmp > /root/bidon2.tmp
-   read bidon Temp bidon1 < /root/bidon2.tmp
-   grep Humidity /root/bidon.tmp > /root/bidon2.tmp
-   read bidon Humidity bidon1 < /root/bidon2.tmp
+   AdafruitDHT.py 22 4 > bidon.tmp
+   /usr/bin/tail -1 bidon.tmp | sed 's/=/ /g' | sed 's/*//g' | sed 's/%//g'> /root/bidon1.tmp
+   read bidon Temp bidon Humidity bidon < /root/bidon1.tmp
    if [ -z "${Temp}" ]
      then let Temp=9999
           let Humidity=9999
@@ -165,7 +162,7 @@ do time1=`date +%s` # initial time
    echo "Taking 50mm shot"
    gphoto2 --port $port50mm --capture-image-and-download --filename $nomfich50 &
    # acquisition de l'image 8mm
-   /bin/sleep 0.1
+   /bin/sleep 0.25
    echo "Taking 8mm shot"
    gphoto2 --port $port8mm --capture-image-and-download --filename $nomfich8 &
    /bin/sleep 8
