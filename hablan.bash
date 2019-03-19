@@ -48,7 +48,7 @@ globalpos () {
 # ==================================
 # main
 # activate gps option 0=off 1=on
-serial8mm="00000000000000003282827005111659"
+serial8mm="00000000000000003282741003386996"
 gpsf=1
 gpsport="ttyACM0"
 nobs=9999  		# number of images to acquire; if 9999 then infinity
@@ -78,14 +78,14 @@ then echo "Not enough cameras attached" $camconnected
      exit 2
 fi
 head -3 camera-list.tmp | tail -1 > bidon.tmp
-read bidon port1 bidon < bidon.tmp
+read bidon bidon bidon port1 bidon < bidon.tmp
 head -4 camera-list.tmp | tail -1 > bidon.tmp
-read bidon port2 bidon < bidon.tmp
+read bidon bidon bidon port2 bidon < bidon.tmp
 
 echo $port1 $port2
 
 # identifier le port de la 8mm grace au serial number
-gphoto2 --port $port1 -summary | grep serial > bidon.tmp
+gphoto2 --port $port1 --summary | grep Serial > bidon.tmp
 read bidon bidon serial bidon < bidon.tmp
 if [ $serial == $serial8mm ]
 then port8mm=$port1
@@ -121,12 +121,11 @@ do time1=`date +%s` # initial time
    H=`date +%H`
    M=`date +%M`
    S=`date +%S`
-   nomfich=$y"-"$mo"-"$d
-   nomfich=$nomfich".txt"
-   time=$nomfich" "$H":"$M":"$S
-   datetime=$nomfich"_"$H"-"$M"-"$S
-   nomfich50=$datetime_50mm.arw  
-   nomfich8=$datetime_8mm.arw    
+   nomfich=$y"-"$mo"-"$d".txt"
+   time=$y"-"$mo"-"$d" "$H":"$M":"$S
+   datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
+   nomfich50=$datetime"_50mm.arw"
+   nomfich8=$datetime"_8mm.arw"   
 
    if [ ! -d /var/www/html/data/$y ]
    then mkdir /var/www/html/data/$y
@@ -134,23 +133,31 @@ do time1=`date +%s` # initial time
    if [ ! -d /var/www/html/data/$y/$mo ]
    then /bin/mkdir /var/www/html/data/$y/$mo
    fi
+   if [ ! -d /var/www/html/data/$y/$mo/$d ]
+   then /bin/mkdir /var/www/html/data/$y/$mo/$d
+   fi
+   if [ ! -d /home/sand/backup/$y ]
+   then mkdir /home/sand/backup/$y
+   fi
+   if [ ! -d /home/sand/backup/$y/$mo ]
+   then /bin/mkdir /home/sand/backup/$y/$mo
+   fi
+   if [ ! -d /home/sand/backup/$y/$mo/$d ]
+   then /bin/mkdir /home/sand/backup/$y/$mo/$d
+   fi
    # writing into log file
-   echo $time $lat $lon $alt $nomfich50 $nomfich8 >> /var/www/html/data/$y/$mo/$nomfich.log
+   echo $time $lat $lon $alt $nomfich50 $nomfich8 >> /var/www/html/data/$y/$mo/$d/$nomfich.log
    # acquisition de l'image 50mm
    echo "Taking 50mm shot"
    gphoto2 --port $port50mm --capture-image-and-download --filename $nomfich50
-
-
    # acquisition de l'image 8mm
    echo "Taking 8mm shot"
    gphoto2 --port $port8mm --capture-image-and-download --filename $nomfich8
-
-
    # backup images
-   cp -f $nomfich50 /var/www/html/data/$y/$mo/$nomfich50
-   mv -f $nomfich50 /home/sand/backup/$nomfich50
+   cp -f $nomfich50 /var/www/html/data/$y/$mo/$d/$nomfich50
+   mv -f $nomfich50 /home/sand/backup/$y/$mo/$d/$nomfich50
    cp -f $nomfich8 /var/www/html/data/$y/$mo/$nomfich8
-   mv -f $nomfich8 /home/sand/backup/$nomfich8
+   mv -f $nomfich8 /home/sand/backup/$y/$mo/$d/$nomfich8
 
    time2=`date +%s`
    let idle=20-time2+time1  # one measurement every 20 sec
