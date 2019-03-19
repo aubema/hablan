@@ -58,6 +58,7 @@ nobs=9999  		# number of images to acquire; if 9999 then infinity
 # wait for the gps startup
 echo "Waiting 15 seconds for the gps & camera startup"
 /bin/sleep 15
+gphoto2 --auto-detect
 # reset the gps
 killall gpsd
 echo "Reset the gps"
@@ -110,6 +111,17 @@ do time1=`date +%s` # initial time
         fi
    else  echo "GPS mode off"
    fi
+   # lecture de la temperature et de l humidite
+   AdafruitDHT.py > bidon.tmp
+   /usr/bin/tail -1 bidon.tmp | sed 's/=/ /g'> /root/bidon1.tmp
+   grep Temp /root/bidon1.tmp > /root/bidon2.tmp
+   read bidon Temp bidon1 < /root/bidon2.tmp
+   grep Humidity /root/bidon.tmp > /root/bidon2.tmp
+   read bidon Humidity bidon1 < /root/bidon2.tmp
+   if [ -z "${Temp}" ]
+     then let Temp=9999
+          let Humidity=9999
+   fi 
    echo "=========================="
    echo "Start image acquisition #" $count
    if [  $nobs != 9999 ] 
@@ -122,7 +134,7 @@ do time1=`date +%s` # initial time
    H=`date +%H`
    M=`date +%M`
    S=`date +%S`
-   nomfich=$y"-"$mo"-"$d".txt"
+   nomfich=$y"-"$mo"-"$d
    time=$y"-"$mo"-"$d" "$H":"$M":"$S
    datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
    nomfich50=$datetime"_50mm.arw"
@@ -147,7 +159,8 @@ do time1=`date +%s` # initial time
    then /bin/mkdir /home/sand/backup/$y/$mo/$d
    fi
    # writing into log file
-   echo $time $lat $lon $alt $nomfich50 $nomfich8 >> /var/www/html/data/$y/$mo/$d/$nomfich.log
+   echo $time $lat $lon $alt $Temp $Humidity $nomfich50 $nomfich8 >> /var/www/html/data/$y/$mo/$d/$nomfich.log
+   echo $time $lat $lon $alt $Temp $Humidity $nomfich50 $nomfich8 >> /home/sand/backup/$y/$mo/$d/$nomfich.log
    # acquisition de l'image 50mm
    echo "Taking 50mm shot"
    gphoto2 --port $port50mm --capture-image-and-download --filename $nomfich50 &
