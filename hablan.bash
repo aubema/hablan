@@ -56,8 +56,8 @@ nobs=9999  		# number of images to acquire; if 9999 then infinity
 # main loop
 #
 # wait for the gps startup
-echo "Waiting 10 seconds for the gps startup"
-/bin/sleep 10
+echo "Waiting 15 seconds for the gps & camera startup"
+/bin/sleep 15
 # reset the gps
 killall gpsd
 echo "Reset the gps"
@@ -98,6 +98,7 @@ fi
 i=0
 while [ $i -lt $nobs ]
 do time1=`date +%s` # initial time
+   rm -f capt*.arw
    #
    #  searching for gps
    #
@@ -149,14 +150,16 @@ do time1=`date +%s` # initial time
    echo $time $lat $lon $alt $nomfich50 $nomfich8 >> /var/www/html/data/$y/$mo/$d/$nomfich.log
    # acquisition de l'image 50mm
    echo "Taking 50mm shot"
-   gphoto2 --port $port50mm --capture-image-and-download --filename $nomfich50
+   gphoto2 --port $port50mm --capture-image-and-download --filename $nomfich50 &
    # acquisition de l'image 8mm
+   /bin/sleep 0.1
    echo "Taking 8mm shot"
-   gphoto2 --port $port8mm --capture-image-and-download --filename $nomfich8
+   gphoto2 --port $port8mm --capture-image-and-download --filename $nomfich8 &
+   /bin/sleep 8
    # backup images
    cp -f $nomfich50 /var/www/html/data/$y/$mo/$d/$nomfich50
    mv -f $nomfich50 /home/sand/backup/$y/$mo/$d/$nomfich50
-   cp -f $nomfich8 /var/www/html/data/$y/$mo/$nomfich8
+   cp -f $nomfich8 /var/www/html/data/$y/$mo/$d/$nomfich8
    mv -f $nomfich8 /home/sand/backup/$y/$mo/$d/$nomfich8
 
    time2=`date +%s`
