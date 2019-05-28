@@ -173,7 +173,7 @@ do time1=`date +%s` # initial time
    mv -f $nomfich8 /home/sand/backup/$y/$mo/$d/$nomfich8
 
    time2=`date +%s`
-   let idle=20-time2+time1  # one measurement every 20 sec
+   let idle=20-$time2+$time1  # one measurement every 20 sec
    echo $idle $time1 $time2
    if [ $idle -lt 0 ]
    then let idle=0
