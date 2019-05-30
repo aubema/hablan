@@ -51,7 +51,7 @@ echo $mean | sed 's/\./ /g' > /home/sand/toto.tmp
 read luminosite bidon < /home/sand/toto.tmp
 # if it is dark increase the gain to the maximum and take a new image
 if [ $luminosite -le 50 ] 
-then sudo raspistill  -ss 60000000 -awb off -awbg 8,8 -ISO 1600 -o sky.jpg
+then /usr/bin/raspistill  -ss 60000000 -awb off -awbg 8,8 -ISO 1600 -o sky.jpg
 fi
 # mesurer le niveau de gris moyen (mean) sur cammodel
 /usr/bin/identify -verbose /home/sand/sky.jpg | /bin/grep mean | /bin/sed 's/mean://g' |  /usr/bin/tr -d '\n' > /home/sand/mean.tmp
