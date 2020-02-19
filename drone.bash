@@ -57,7 +57,7 @@ count=1
 #
 # wait for the gps startup
 echo "Waiting 15 seconds for the gps & camera startup"
-#/bin/sleep 15
+/bin/sleep 15
 gphoto2 --auto-detect
 # reset the gps
 killall gpsd
