@@ -115,6 +115,7 @@ do time1=`date +%s` # initial time
    nomfich=$y"-"$mo"-"$d
    time=$y"-"$mo"-"$d" "$H":"$M":"$S
    datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
+   datetime1=$y"-"$mo"-"$d
    nomfich=$datetime"_8mm.arw"
 
    if [ ! -d /var/www/html/data/$y ]
@@ -125,6 +126,9 @@ do time1=`date +%s` # initial time
    fi
    if [ ! -d /var/www/html/data/$y/$mo/$d ]
    then /bin/mkdir /var/www/html/data/$y/$mo/$d
+   fi
+   if [ ! -d /home/sand/Pictures/$datetime1]
+   then /bin/mkdir /home/sand/Pictures/$datetime1
    fi
    # writing into log file
    echo $time $lat $lon $alt $nomfich >> /var/www/html/data/$y/$mo/$d/$nomfich.log
