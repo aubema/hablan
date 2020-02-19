@@ -136,7 +136,7 @@ do time1=`date +%s` # initial time
    echo "Taking shot"
    gphoto2 --port $port1 --capture-image-and-download --filename $nomfich &
    /bin/sleep 8
-   mv -f $nomfich /home/sand/Pictures/$datetime1
+   mv -f $nomfich /home/sand/Pictures/$datetime1/$nomfich
    let count+=1
 
    time2=`date +%s`
