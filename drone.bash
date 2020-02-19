@@ -57,7 +57,7 @@ count=1
 #
 # wait for the gps startup
 echo "Waiting 15 seconds for the gps & camera startup"
-/bin/sleep 15
+#/bin/sleep 15
 gphoto2 --auto-detect
 # reset the gps
 killall gpsd
@@ -119,7 +119,7 @@ do time1=`date +%s` # initial time
    nomfich=$datetime"_8mm.arw"
 
    if [ ! -d /var/www/html/data/$y ]
-   then mkdir /var/www/html/data/$y
+   then /bin/mkdir /var/www/html/data/$y
    fi
    if [ ! -d /var/www/html/data/$y/$mo ]
    then /bin/mkdir /var/www/html/data/$y/$mo
@@ -127,7 +127,7 @@ do time1=`date +%s` # initial time
    if [ ! -d /var/www/html/data/$y/$mo/$d ]
    then /bin/mkdir /var/www/html/data/$y/$mo/$d
    fi
-   if [ ! -d /home/sand/Pictures/$datetime1]
+   if [ ! -d /home/sand/Pictures/$datetime1 ]
    then /bin/mkdir /home/sand/Pictures/$datetime1
    fi
    # writing into log file
@@ -136,7 +136,7 @@ do time1=`date +%s` # initial time
    echo "Taking shot"
    gphoto2 --port $port1 --capture-image-and-download --filename $nomfich &
    /bin/sleep 8
-   mv -f $nomfich /home/sand/Pictures
+   mv -f $nomfich /home/sand/Pictures/$datetime1
    let count+=1
 
    time2=`date +%s`
