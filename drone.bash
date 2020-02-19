@@ -50,7 +50,8 @@ rm -f /root/*.tmp
 # activate gps option 0=off 1=on
 gpsf=1
 gpsport="ttyACM0"
-nobs=9999  		# number of images to acquire; if 9999 then infinity
+nobs=9999   # number of images to acquire; if 9999 then infinity
+count=1
 #
 # main loop
 #
@@ -99,7 +100,7 @@ do time1=`date +%s` # initial time
    else  echo "GPS mode off"
    fi
 
-   echo "=========================="
+   echo "======================================="
    echo "Start image acquisition #" $count
    if [  $nobs != 9999 ] 
    then let i=i+1 #   never ending loop
@@ -114,7 +115,7 @@ do time1=`date +%s` # initial time
    nomfich=$y"-"$mo"-"$d
    time=$y"-"$mo"-"$d" "$H":"$M":"$S
    datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
-   nomfich=$datetime"_8mm.arw"   
+   nomfich=$datetime"_8mm.arw"
 
    if [ ! -d /var/www/html/data/$y ]
    then mkdir /var/www/html/data/$y
@@ -131,6 +132,8 @@ do time1=`date +%s` # initial time
    echo "Taking shot"
    gphoto2 --port $port1 --capture-image-and-download --filename $nomfich &
    /bin/sleep 8
+   mv -f $nomfich /home/sand/Pictures
+   let count+=1
 
    time2=`date +%s`
    let idle=20-$time2+$time1  # one measurement every 20 sec
