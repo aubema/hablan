@@ -51,7 +51,7 @@ Magnetometer_Init()     # initialize HMC5883L magnetometer
 
 print (" Reading Heading Angle")
 
-while True:
+#while True:
     
 	
         #Read magnetometer raw value
@@ -73,4 +73,4 @@ while True:
         heading_angle = int(heading * 180/pi) + declination
 
         print ("Heading Angle = %d°" %heading_angle)
-        sleep(1)
+#        sleep(1)
