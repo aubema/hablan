@@ -72,5 +72,5 @@ if(heading < 0):
 #convert into angle
 heading_angle = int(heading * 180/pi) + declination
 
-print ("Heading Angle = %d°" %heading_angle)
+print ("Heading Angle = %d°" heading_angle)
 #        sleep(1)
