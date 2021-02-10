@@ -54,23 +54,23 @@ print (" Reading Heading Angle")
 #while True:
     
 	
-        #Read magnetometer raw value
-        x = read_raw_data(X_axis_H)
-        z = read_raw_data(Z_axis_H)
-        y = read_raw_data(Y_axis_H)
+#Read magnetometer raw value
+x = read_raw_data(X_axis_H)
+z = read_raw_data(Z_axis_H)
+y = read_raw_data(Y_axis_H)
 
-        heading = math.atan2(y, x)
+heading = math.atan2(y, x)
         
-        #Due to declination check for >360 degree
-        if(heading > 2*pi):
-                heading = heading - 2*pi
+#Due to declination check for >360 degree
+if(heading > 2*pi):
+    heading = heading - 2*pi
 
-        #check for sign
-        if(heading < 0):
-                heading = heading + 2*pi
+    #check for sign
+if(heading < 0):
+    heading = heading + 2*pi
 
-        #convert into angle
-        heading_angle = int(heading * 180/pi) + declination
+#convert into angle
+heading_angle = int(heading * 180/pi) + declination
 
-        print ("Heading Angle = %d°" %heading_angle)
+print ("Heading Angle = %d°" %heading_angle)
 #        sleep(1)
