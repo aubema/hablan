@@ -49,10 +49,6 @@ Device_Address = 0x1e   # HMC5883L magnetometer device address
 
 Magnetometer_Init()     # initialize HMC5883L magnetometer 
 
-print (" Reading Heading Angle")
-
-#while True:
-    
 	
 #Read magnetometer raw value
 x = read_raw_data(X_axis_H)
@@ -72,5 +68,4 @@ if(heading < 0):
 #convert into angle
 heading_angle = int(heading * 180/pi) + declination
 
-print "Heading Angle = ", heading_angle
-#        sleep(1)
+print "Heading_Angle= ", heading_angle
