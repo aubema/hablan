@@ -63,8 +63,7 @@ killall -9 gpsd
 echo "Set gps in airborne mode"
 # config string obtained from u-blox ucenter app on windows message window, UBX, CFG, NAV5
 gpsctl -D 5 -x "\xB5\x62\x06\x24\x24\x00\xFF\xFF\x06\x03\x00\x00\x00\x00\x10\x27\x00\x00\x05\x00\xFA\x00\xFA\x00\x64\x00\x2C\x01\x00\x3C\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x52\xE8" /dev/$gpsport
-echo "Start gpsd service"
-service gpsd start
+# gpsd will automatically restart after a few seconds
 #
 # trouver les ports sur lesquels les cameras sont connectes
 echo "Looking for cameras ports"
