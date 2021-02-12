@@ -26,9 +26,7 @@ globalpos () {
 #    reading 10 gps transactions
 #
 #
-     /usr/bin/gpspipe -w -n 10 > /root/coords.tmp &
-     sleep 1
-     killall -s SIGINT gpspipe 
+     /usr/bin/gpspipe -w -n 5 > /root/coords.tmp
      /usr/bin/tail -2 /root/coords.tmp | sed 's/,/\n/g' | sed 's/"//g' | sed 's/:/ /g'> /root/bidon.tmp
      grep lat /root/bidon.tmp > /root/bidon1.tmp
      read bidon lat bidon1 < /root/bidon1.tmp
@@ -60,12 +58,11 @@ echo "Waiting 15 seconds for the gps & camera startup"
 /bin/sleep 15
 gphoto2 --auto-detect
 # reset the gps
-killall gpsd
-echo "Reset the gps"
-gpsctl -D 5 -x "\xB5\x62\x06\x04\x04\x00\xFF\x87\x00\x00\x94\xF5" /dev/$gpsport
+killall -9 gpsd
 # set the gps to airborne < 1g mode
 echo "Set gps in airborne mode"
-gpsctl -D 5 -x "\xB5\x62\x06\x24\x24\x00\xFF\xFF\x06\x03\x00\x00\x00\x00\x10\x27\x00\x00\x05\x00\xFA\x00\xFA\x00\x64\x00\x2C\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x16\xDC" /dev/$gpsport
+# config string obtained from u-blox ucenter app on windows message window, UBX, CFG, NAV5
+gpsctl -D 5 -x "\xB5\x62\x06\x24\x24\x00\xFF\xFF\x06\x03\x00\x00\x00\x00\x10\x27\x00\x00\x05\x00\xFA\x00\xFA\x00\x64\x00\x2C\x01\x00\x3C\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x52\xE8" /dev/$gpsport
 echo "Start gpsd service"
 service gpsd start
 #
