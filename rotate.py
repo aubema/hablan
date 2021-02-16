@@ -2,9 +2,9 @@
 # move the camera assembly
 # 
 # usage: rotate.py steps slow_level
-# steps = number of steps (400 for a complete rotation motor only)
+# steps = number of steps (200 for a complete rotation motor only)
 #         with the 60-16 teeth gears and strap (factor of 3.75)
-#          so that 400x3.75 = 1500 steps for 360deg
+#          so that 200x3.75 = 750 steps for 360deg
 # slow_level 1=fastest n=max_speed/n
 import RPi.GPIO as GPIO
 import time
