@@ -82,4 +82,3 @@ else:
         if j==8:
             setStep(1,0,1,0)
             j=0
-
