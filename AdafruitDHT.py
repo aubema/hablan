@@ -12,6 +12,7 @@ else:
     print('Example: sudo ./Adafruit_DHT.py  4 - DHT22 connected to GPIO pin #4')
     sys.exit(1)
 gpio_pin="board.D"+pin
+print(gpio_pin)
 # Initial the dht device, with data pin connected to:
 # dhtDevice = adafruit_dht.DHT22(board.D4)
  
