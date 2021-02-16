@@ -60,14 +60,14 @@ if reverse==0:
             if j==4:
                 setStep(1,0,0,1)        
                 #setStep(0,0,0,1)
-#    		if j==5:
-#       			setStep(0,1,0,1)
-#    		if j==6:
-#       			setStep(0,1,0,0)
-#    		if j==7:
-#       			setStep(0,1,1,0)
-#    		if j==8:
-#       			setStep(0,0,1,0)
+            #if j==5:
+                #setStep(0,1,0,1)
+            #if j==6:
+                #setStep(0,1,0,0)
+            #if j==7:
+                #setStep(0,1,1,0)
+            #if j==8:
+                #setStep(0,0,1,0)
                 j=0
 
 
