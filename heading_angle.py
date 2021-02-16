@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # HMC5883L magnetometer heading angle calculation
 # note: true_heading=sensor_heading+magnetic_declination_angle
 # for Timmins 10.4 deg (west) c.f. geomag.nrcan.gc.ca/calc/mdcal-r-en.php
