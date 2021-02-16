@@ -1,46 +1,11 @@
 #!/usr/bin/python
-
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
 import time
 import board
 import adafruit_dht
 import sys
 
 if len(sys.argv) == 2 :
-    pin = sys.argv[2]
+    pin = sys.argv[1]
 else:
     print('Usage: sudo ./Adafruit_DHT.py  <GPIO pin number>')
     print('Example: sudo ./Adafruit_DHT.py  4 - DHT22 connected to GPIO pin #4')
