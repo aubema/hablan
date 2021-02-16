@@ -62,7 +62,7 @@ if reverse==0:
 
 
 # Reverse previous step sequence to reverse motor direction
-else:
+if reverse==1:
 	for i in range(0, steps):
         j=j+1
         if j==1:
