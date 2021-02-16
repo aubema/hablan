@@ -4,7 +4,7 @@
 # usage: move_filter.py steps slow_level
 # steps = number of steps (400 for a complete rotation motor only)
 #         with the 60-16 teeth gears and strap (factor of 3.75)
-          so that 400x3.75 = 1500 steps for 360deg
+#          so that 400x3.75 = 1500 steps for 360deg
 # slow_level 1=fastest n=max_speed/n
 import RPi.GPIO as GPIO
 import time
@@ -52,19 +52,22 @@ if reverse==0:
 		if j==1:
        			setStep(1,0,1,0)
     		if j==2:
-       			setStep(1,0,0,0)
+#       			setStep(1,0,0,0)
+                setStep(0,1,1,0)
     		if j==3:
-      			setStep(1,0,0,1)
+#      			setStep(1,0,0,1)
+                setStep(0,1,0,1)
     		if j==4:
-       			setStep(0,0,0,1)
-    		if j==5:
-       			setStep(0,1,0,1)
-    		if j==6:
-       			setStep(0,1,0,0)
-    		if j==7:
-       			setStep(0,1,1,0)
-    		if j==8:
-       			setStep(0,0,1,0)
+                setStep(1,0,0,1)        
+#       			setStep(0,0,0,1)
+#    		if j==5:
+#       			setStep(0,1,0,1)
+#    		if j==6:
+#       			setStep(0,1,0,0)
+#    		if j==7:
+#       			setStep(0,1,1,0)
+#    		if j==8:
+#       			setStep(0,0,1,0)
        			j=0
 
 
