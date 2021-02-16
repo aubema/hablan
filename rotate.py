@@ -59,3 +59,16 @@ if reverse==0:
             setStep(1,0,0,1)
             j=0
     setStep(0,0,0,0)
+else:
+    for i in range(0, steps):
+        j=j+1
+        if j==1:
+            setStep(1,0,0,1)
+        if j==2:
+            setStep(0,1,0,1)
+        if j==3:
+            setStep(0,1,1,0)
+        if j==4:
+            setStep(1,0,1,0)
+            j=0
+    setStep(0,0,0,0)
