@@ -10,15 +10,9 @@ import adafruit_dht
 # This may be necessary on a Linux single board computer like the Raspberry Pi,
 # but it will not work in CircuitPython.
 dhtDevice = adafruit_dht.DHT22(board.D7, use_pulseio=False)
-try:
-    # Print the values to the serial port
-    temperature1_c = dhtDevice.temperature
-    humidity1 = dhtDevice.humidity
-    errorflag=0
+temperature1_c = dhtDevice.temperature
+humidity1 = dhtDevice.humidity
 dhtDevice = adafruit_dht.DHT22(board.D1, use_pulseio=False)
-
-try:
-    # Print the values to the serial port
-    temperature2_c = dhtDevice.temperature
-    humidity2 = dhtDevice.humidity
+temperature2_c = dhtDevice.temperature
+humidity2 = dhtDevice.humidity
 print(temperature1_c, temperature2_c, humidity1, humidity2)
