@@ -9,7 +9,7 @@ import adafruit_dht
 # you can pass DHT22 use_pulseio=False if you wouldn't like to use pulseio.
 # This may be necessary on a Linux single board computer like the Raspberry Pi,
 # but it will not work in CircuitPython.
-
+while False:
 try:
     dhtDevice = adafruit_dht.DHT22(board.D7, use_pulseio=False)
     temperature1_c = dhtDevice.temperature
