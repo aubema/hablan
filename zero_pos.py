@@ -10,6 +10,7 @@ import sys
 half = 375
 delay = 0.005
 full=2*half
+destination=0
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -44,6 +45,7 @@ j=0
 for i in range(0, half):
     # stop when encoder found
     if GPIO.input(sensor_gpio)==0:
+        destination=1
 		break
     j=j+1
     if j==1:
@@ -57,7 +59,7 @@ for i in range(0, half):
         j=0
 print("titi")
 # move reverse direction complete turn until sensor activated     		
-if GPIO.input(sensor_gpio)!=0:
+if destination==0:
     j=0
     print("toto")
     for i in range(0, full):
