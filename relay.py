@@ -6,9 +6,10 @@ import sys
 GPIO.setmode(GPIO.BCM) # GPIO Numbers instead of board numbers
 RELAY_GPIO = int(sys.argv[1])
 STATE = int(sys.argv[2])
-if STATE==1:
-    mode="GPIO.HIGH"
-else:
-    mode="GPIO.LOW"
 GPIO.setup(RELAY_GPIO, GPIO.OUT) # GPIO Assign mode
-GPIO.output(RELAY_GPIO, mode) # out
+if STATE==1:
+    GPIO.output(RELAY_GPIO, GPIO.HIGH)
+else:
+    GPIO.output(RELAY_GPIO, GPIO.LOW)
+
+
