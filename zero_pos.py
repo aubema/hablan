@@ -44,8 +44,9 @@ def setStep(w1, w2, w3, w4):
 j=0
 for i in range(0, half):
     # stop when encoder found
-    if GPIO.input(sensor_gpio)==1:
+    if GPIO.input(sensor_gpio)==0:
         destination=1
+        break
     if destination==0:
         j=j+1
         if j==1:
@@ -62,8 +63,9 @@ if destination==0:
     j=0
     for i in range(0, full):
         # stop when encoder found
-        if GPIO.input(sensor_gpio)==1:
+        if GPIO.input(sensor_gpio)==0:
             destination=1
+            break
         if destination==0:
             j=j+1
             if j==1:
