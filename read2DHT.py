@@ -23,7 +23,6 @@ while errflag==1:
         print(error.args[0])
         time.sleep(2.0)
         errflag=1
-        continue
     except Exception as error:
         dhtDevice.exit()
         raise error
@@ -41,7 +40,6 @@ while True:
         print(error.args[0])
         time.sleep(2.0)
         errflag=1
-        continue
     except Exception as error:
         dhtDevice.exit()
         raise error
