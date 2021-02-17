@@ -26,7 +26,7 @@ GPIO.setup(coil_B_1_pin, GPIO.OUT)
 GPIO.setup(coil_B_2_pin, GPIO.OUT)
 
 # set the sensor pin
-sensor_gpio=8
+sensor_gpio=3
 GPIO.setup(sensor_gpio, GPIO.IN)
 
 # Function for step sequence
@@ -45,24 +45,15 @@ for i in range(0, steps):
 	if GPIO.input(sensor_gpio)==0:
 		break
 	j=j+1
-	if j==1:
-       		setStep(0,0,1,0)
-    	if j==2:
-       		setStep(0,1,1,0)
-    	if j==3:
-      		setStep(0,1,0,0)
-    	if j==4:
-       		setStep(0,1,0,1)
-    	if j==5:
-       		setStep(0,0,0,1)
-    	if j==6:
-       		setStep(1,0,0,1)
-    	if j==7:
-       		setStep(1,0,0,0)
-    	if j==8:
-       		setStep(1,0,1,0)
-       		j=0
-
+        if j==1:
+            setStep(1,0,1,0)
+        if j==2:
+            setStep(0,1,1,0)
+        if j==3:
+            setStep(0,1,0,1)
+        if j==4:
+            setStep(1,0,0,1)
+            j=0
 # move reverse direction complete turn until sensor activated     		
 if GPIO.input(sensor_gpio)!=0:
     j=0
@@ -72,19 +63,12 @@ if GPIO.input(sensor_gpio)!=0:
             break
             j=j+1
             if j==1:
-                setStep(1,0,1,0)                
+                setStep(1,0,0,1)
             if j==2:
-                setStep(1,0,0,0)               
-            if j==3:
-                setStep(1,0,0,1)                
-            if j==4:
-                setStep(0,0,0,1)               
-            if j==5:
                 setStep(0,1,0,1)
-            if j==6:
-                setStep(0,1,0,0)
-            if j==7:
+            if j==3:
                 setStep(0,1,1,0)
-            if j==8:
-                setStep(0,0,1,0)
-                j=0
+            if j==4:
+            setStep(1,0,1,0)
+            j=0
+setStep(0,0,0,0)
