@@ -11,4 +11,4 @@ if STATE==1:
 else:
     mode="GPIO.LOW"
 GPIO.setup(RELAY_GPIO, GPIO.OUT) # GPIO Assign mode
-GPIO.output(RELAIS_GPIO, mode) # out
+GPIO.output(RELAY_GPIO, mode) # out
