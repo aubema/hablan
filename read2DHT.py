@@ -35,4 +35,4 @@ except RuntimeError as error:
 except Exception as error:
     dhtDevice.exit()
     raise error
-print(temperature1_c, temperature2_c, humidity_1, humidity_2)
+print(temperature1_c, temperature2_c, humidity1, humidity2)
