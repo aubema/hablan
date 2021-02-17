@@ -28,7 +28,7 @@ while errflag==1:
         raise error
 dhtDevice = adafruit_dht.DHT22(board.D1, use_pulseio=False)
 errflag=1
-while True:
+while errflag==1:
     try:
         # Print the values to the serial port
         temperature_c = dhtDevice.temperature
