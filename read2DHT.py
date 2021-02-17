@@ -18,4 +18,4 @@ humidity2 = dhtDevice.humidity
 test=temperature1_c+temperature2_c+humidity1+humidity2
 try: test
 except NameError: print ("ERR")
-else: print(temperature1_c, temperature2_c, humidity1, humidity2)
+else: print("OK", temperature1_c, temperature2_c, humidity1, humidity2)
