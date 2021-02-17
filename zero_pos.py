@@ -54,7 +54,7 @@ for i in range(0, steps):
         if j==4:
             setStep(1,0,0,1)
             j=0
-    print("titi")
+print("titi")
 # move reverse direction complete turn until sensor activated     		
 if GPIO.input(sensor_gpio)!=0:
     j=0
