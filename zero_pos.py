@@ -45,16 +45,17 @@ for i in range(0, half):
         # stop when encoder found
 	if GPIO.input(sensor_gpio)==0:
 		break
-    j=j+1
-    if j==1:
-        setStep(1,0,1,0)
-    if j==2:
-        setStep(0,1,1,0)
-    if j==3:
-        setStep(0,1,0,1)
-    if j==4:
-        setStep(1,0,0,1)
-        j=0
+    else:
+        j=j+1
+        if j==1:
+            setStep(1,0,1,0)
+        if j==2:
+            setStep(0,1,1,0)
+        if j==3:
+            setStep(0,1,0,1)
+        if j==4:
+            setStep(1,0,0,1)
+            j=0
 print("titi")
 # move reverse direction complete turn until sensor activated     		
 if GPIO.input(sensor_gpio)!=0:
@@ -64,14 +65,15 @@ if GPIO.input(sensor_gpio)!=0:
         # stop when encoder found
         if GPIO.input(sensor_gpio)==0:
             break
-        j=j+1
-        if j==1:
-            setStep(1,0,0,1)
-        if j==2:
-            setStep(0,1,0,1)
-        if j==3:
-            setStep(0,1,1,0)
-        if j==4:
-            setStep(1,0,1,0)
-        j=0
+        else:
+            j=j+1
+            if j==1:
+                setStep(1,0,0,1)
+            if j==2:
+                setStep(0,1,0,1)
+            if j==3:
+                setStep(0,1,1,0)
+            if j==4:
+                setStep(1,0,1,0)
+            j=0
 setStep(0,0,0,0)
