@@ -42,7 +42,7 @@ def setStep(w1, w2, w3, w4):
 # move forward half turn until sensor activated
 j=0
 for i in range(0, half):
-        # stop when encoder found
+    # stop when encoder found
 	if GPIO.input(sensor_gpio)==0:
 		break
     else:
