@@ -6,8 +6,8 @@ import RPi.GPIO as GPIO
 import time
 import sys
 
-# Variables
-steps = 750
+# Variables steps is half a turn
+steps = 375
 delay = 0.005
 
 GPIO.setmode(GPIO.BCM)
