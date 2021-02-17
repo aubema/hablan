@@ -46,7 +46,7 @@ for i in range(0, half):
     # stop when encoder found
     if GPIO.input(sensor_gpio)==0:
         destination=1
-        break
+        exit
     if destination==0:
         j=j+1
         if j==1:
@@ -65,7 +65,7 @@ if destination==0:
         # stop when encoder found
         if GPIO.input(sensor_gpio)==0:
             destination=1
-            break
+            exit
         if destination==0:
             j=j+1
             if j==1:
