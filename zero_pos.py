@@ -28,7 +28,7 @@ GPIO.setup(coil_B_1_pin, GPIO.OUT)
 GPIO.setup(coil_B_2_pin, GPIO.OUT)
 
 # set the sensor pin
-sensor_gpio=3
+sensor_gpio=9
 GPIO.setup(sensor_gpio, GPIO.IN)
 
 # Function for step sequence
@@ -44,6 +44,7 @@ def setStep(w1, w2, w3, w4):
 j=0
 for i in range(0, half):
     # stop when encoder found
+    code=GPIO.input(sensor_gpio)
     if GPIO.input(sensor_gpio)==0:
         destination=1
         break
