@@ -17,5 +17,5 @@ temperature2_c = dhtDevice.temperature
 humidity2 = dhtDevice.humidity
 test=temperature1_c+temperature2_c+humidity1+humidity2
 try: test
-    print(temperature1_c, temperature2_c, humidity1, humidity2)
 except NameError: print ("ERR")
+else: print(temperature1_c, temperature2_c, humidity1, humidity2)
