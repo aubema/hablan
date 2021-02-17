@@ -64,8 +64,10 @@ if GPIO.input(sensor_gpio)!=0:
     for i in range(0, full):
         # stop when encoder found
         if GPIO.input(sensor_gpio)==0:
+            print("tata")
             break
         else:
+            print("tutu")
             j=j+1
             if j==1:
                 setStep(1,0,0,1)
