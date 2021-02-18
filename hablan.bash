@@ -23,7 +23,7 @@
 # global positioning system
 globalpos () {
 #
-#    reading 10 gps transactions
+#    reading 5 gps transactions
 #
 #
      /usr/bin/gpspipe -w -n 5 > /root/coords.tmp
@@ -43,15 +43,27 @@ globalpos () {
      /bin/echo "GPS gives Latitude:" $lat ", Longitude:" $lon "and Altitude:" $alt
 }
 #
-# ==================================
+#
+#
+#
+# ===========================================================================
+# ===========================================================================
+#
+#
+#
+#
 # main
 # activate gps option 0=off 1=on
-serial8mm="00000000000000003282741003386996"
 gpsf=1
 gpsport="ttyACM0"
+gpioTCam=15
+gpioTHub=14
+TlimCam=5   # minimum temperature in camera assembly
+TlimHub=5   # minimum temperature in the hub
+
 nobs=9999  		# number of images to acquire; if 9999 then infinity
+serialnadir="00000000000000003282741003386996"
 #
-# main loop
 #
 # wait for the gps startup
 echo "Waiting 15 seconds for the gps & camera startup"
@@ -64,6 +76,7 @@ echo "Set gps in airborne mode"
 # config string obtained from u-blox ucenter app on windows message window, UBX, CFG, NAV5
 gpsctl -D 5 -x "\xB5\x62\x06\x24\x24\x00\xFF\xFF\x06\x03\x00\x00\x00\x00\x10\x27\x00\x00\x05\x00\xFA\x00\xFA\x00\x64\x00\x2C\x01\x00\x3C\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x52\xE8" /dev/$gpsport
 # gpsd will automatically restart after a few seconds
+/bin/sleep 10
 #
 # trouver les ports sur lesquels les cameras sont connectes
 echo "Looking for cameras ports"
@@ -81,17 +94,18 @@ read bidon bidon bidon port2 bidon < bidon.tmp
 
 echo $port1 $port2
 
-# identifier le port de la 8mm grace au serial number
+# identifier le port de la nadir grace au serial number
 gphoto2 --port $port1 --summary | grep Serial > bidon.tmp
 read bidon bidon serial bidon < bidon.tmp
-if [ $serial == $serial8mm ]
-then port8mm=$port1
-     port50mm=$port1
-else port8mm=$port2
-     port50mm=$port1
+if [ $serial == $serialnadir ]
+then portnadir=$port1
+     port60deg=$port2
+else portnadir=$port2
+     port60deg=$port1
 fi
-
-
+#
+# main loop
+#
 i=0
 while [ $i -lt $nobs ]
 do time1=`date +%s` # initial time
@@ -107,74 +121,101 @@ do time1=`date +%s` # initial time
         fi
    else  echo "GPS mode off"
    fi
-   # lecture de la temperature et de l humidite
-   AdafruitDHT.py 4 > bidon.tmp
-   read Temp Humidity bidon < /root/bidon.tmp
-   if [ -z "${Temp}" ]
-     then let Temp=9999
-          let Humidity=9999
-   fi 
+   # reading temperatures in cam assembly and hub
+   # and start heater if required
+   # camera assembly sensor connected to gpio1 and hub sensor in gpio7
+   python3 /usr/local/bin/read2DHT.py > bidon.tmp
+   read stateT THub HHub TCam HCam bidon < /root/bidon.tmp
+   # error detection
+   if [ $stateT != "OK" ]
+   then let Thub=9999
+        let Hhub=9999
+        let TCam=9999
+        let HCam=9999
+   fi
+   if [ $THub -lt $TlimHub ]
+   then /usr/local/bin/relay.py $gpioTHub 1
+   else /usr/local/bin/relay.py $gpioTHub 0
+   fi
+   if [ $TCam -lt $TlimCam ]
+   then /usr/local/bin/relay.py $gpioTCam 1
+   else /usr/local/bin/relay.py $gpioTCam 0
+   fi   
    echo "=========================="
    echo "Start image acquisition #" $count
    if [  $nobs != 9999 ] 
    then let i=i+1 #   never ending loop
    fi
-   n=0
-   y=`date +%Y`
-   mo=`date +%m`
-   d=`date +%d`
-   H=`date +%H`
-   M=`date +%M`
-   S=`date +%S`
-   nomfich=$y"-"$mo"-"$d
-   time=$y"-"$mo"-"$d" "$H":"$M":"$S
-   datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
-   nomfich50=$datetime"_50mm.arw"
-   nomfich8=$datetime"_8mm.arw"   
 
-   if [ ! -d /var/www/html/data/$y ]
-   then mkdir /var/www/html/data/$y
-   fi
-   if [ ! -d /var/www/html/data/$y/$mo ]
-   then /bin/mkdir /var/www/html/data/$y/$mo
-   fi
-   if [ ! -d /var/www/html/data/$y/$mo/$d ]
-   then /bin/mkdir /var/www/html/data/$y/$mo/$d
-   fi
-   if [ ! -d /home/sand/backup/$y ]
-   then mkdir /home/sand/backup/$y
-   fi
-   if [ ! -d /home/sand/backup/$y/$mo ]
-   then /bin/mkdir /home/sand/backup/$y/$mo
-   fi
-   if [ ! -d /home/sand/backup/$y/$mo/$d ]
-   then /bin/mkdir /home/sand/backup/$y/$mo/$d
-   fi
-   # writing into log file
-   echo $time $lat $lon $alt $Temp $Humidity $nomfich50 $nomfich8 >> /var/www/html/data/$y/$mo/$d/$nomfich.log
-   echo $time $lat $lon $alt $Temp $Humidity $nomfich50 $nomfich8 >> /home/sand/backup/$y/$mo/$d/$nomfich.log
-   # acquisition de l'image 50mm
-   echo "Taking 50mm shot"
-   gphoto2 --port $port50mm --capture-image-and-download --filename $nomfich50 &
-   # acquisition de l'image 8mm
-   /bin/sleep 0.25
-   echo "Taking 8mm shot"
-   gphoto2 --port $port8mm --capture-image-and-download --filename $nomfich8 &
-   /bin/sleep 8
-   # backup images
-   cp -f $nomfich50 /var/www/html/data/$y/$mo/$d/$nomfich50
-   mv -f $nomfich50 /home/sand/backup/$y/$mo/$d/$nomfich50
-   cp -f $nomfich8 /var/www/html/data/$y/$mo/$d/$nomfich8
-   mv -f $nomfich8 /home/sand/backup/$y/$mo/$d/$nomfich8
+   # loop over angles (5 values)
+   targetazim=( -144 -72 0 72 144 )
+   for a in $targetazim
+   do # goto zero position
+      /usr/local/bin/zero_pos.py
+      /usr/local/bin/heading_angle.py > bidon1.tmp
+      read bidon azim0 bidon < bidon1.tmp
+      angle=(a-azim0)*750/360
+      # goto target azimuth - rotate the camera assembly
+      /usr/local/bin/rotate.py $angle 1
+   
+      
+     n=0
+     y=`date +%Y`
+     mo=`date +%m`
+     d=`date +%d`
+     H=`date +%H`
+     M=`date +%M`
+     S=`date +%S`
+     nomfich=$y"-"$mo"-"$d
+     time=$y"-"$mo"-"$d" "$H":"$M":"$S
+     datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
+     nomfich60deg=$datetime"_60deg_"$a".arw"
+     nomfichnadir=$datetime"_nadir_"$a".arw"   
 
-   time2=`date +%s`
-   let idle=20-$time2+$time1  # one measurement every 20 sec
-   echo $idle $time1 $time2
-   if [ $idle -lt 0 ]
-   then let idle=0
-   fi
-   echo "Wait " $idle "s before next acquisition."
-   /bin/sleep $idle
+     if [ ! -d /var/www/html/data/$y ]
+     then mkdir /var/www/html/data/$y
+     fi
+     if [ ! -d /var/www/html/data/$y/$mo ]
+     then /bin/mkdir /var/www/html/data/$y/$mo
+     fi
+     if [ ! -d /var/www/html/data/$y/$mo/$d ]
+     then /bin/mkdir /var/www/html/data/$y/$mo/$d
+     fi
+     if [ ! -d /home/sand/backup/$y ]
+     then mkdir /home/sand/backup/$y
+     fi
+     if [ ! -d /home/sand/backup/$y/$mo ]
+     then /bin/mkdir /home/sand/backup/$y/$mo
+     fi
+     if [ ! -d /home/sand/backup/$y/$mo/$d ]
+     then /bin/mkdir /home/sand/backup/$y/$mo/$d
+     fi
+     # writing into log file
+     echo $time $lat $lon $alt $THub $HHub $TCam $HCam $nomfich60deg $nomfichnadir >> /var/www/html/data/$y/$mo/$d/$nomfich.log
+     echo $time $lat $lon $alt $THub $HHub $TCam $HCam $nomfich60deg $nomfichnadir >> /home/sand/backup/$y/$mo/$d/$nomfich.log
+     # acquisition de l'image 60deg
+     echo "Taking 60deg shot"
+     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
+     # acquisition de l'image nadir
+     /bin/sleep 0.25
+     echo "Taking nadir shot"
+     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
+     /bin/sleep 8
+     # backup images
+     cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
+     mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
+     cp -f $nomfichnadir /var/www/html/data/$y/$mo/$d/$nomfichnadir
+     mv -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
+
+     time2=`date +%s`
+     let idle=20-$time2+$time1  # one measurement every 20 sec
+     echo $idle $time1 $time2
+     if [ $idle -lt 0 ]
+     then let idle=0
+     fi
+     echo "Wait " $idle "s before next acquisition."
+     /bin/sleep $idle
+   done
 done
 echo "End of hablan.bash"
 exit 0
