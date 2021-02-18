@@ -69,7 +69,7 @@ targetshutter=" 35 41 "
 # 26 1/13; 27 1/15; 28 1/20; 29 1/25; 30 1/30; 31 1/40; 32 1/50; 33 1/60; 34 1/80; 35 1/100; 36 1/125
 # 37 1/160; 38 1/200; 39 1/250; 40 1/320; 41 1/400; 42 1/500; 43 1/640; 44 1/800; 45 1/1000; 46 1/1250
 # 47 1/1600; 48 1/2000; 49 1/2500; 50 1/3200; 51 1/4000; 52 Bulb
-targetazim=" 0 72 144 216 288 "
+targetazim=" -144 -72 0 72 144 "
 #
 #
 # wait for the gps startup
@@ -214,6 +214,8 @@ do time1=`date +%s` # initial time
      echo "Taking nadir shot" 
          gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
          # waiting for the images to be saved
+         /bin/sleep 0.25 
+         /usr/local/bin/rotate.py "-"$angle 1
          /bin/sleep 8.0         
          # backup images
          cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
