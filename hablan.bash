@@ -214,7 +214,7 @@ do time1=`date +%s` # initial time
      echo "Taking nadir shot" 
          gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
          # waiting for the images to be saved
-         /bin/sleep 4.0         
+         /bin/sleep 8.0         
          # backup images
          cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
          mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
