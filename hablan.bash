@@ -212,12 +212,12 @@ do time1=`date +%s` # initial time
      # acquisition de l'image 60deg  
      echo "Taking 60deg shot"
      gphoto2 --port $port60deg --set-config shutterspeed=$tint
-     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg
+     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
      # acquisition de l'image nadir
      /bin/sleep 0.25
      echo "Taking nadir shot"
      gphoto2 --port $portnadir --set-config shutterspeed=$tint
-     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir
+     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
      # backup images
      cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
      mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
@@ -252,12 +252,12 @@ do time1=`date +%s` # initial time
      # acquisition de l'image 60deg  
      echo "Taking 60deg shot"
      gphoto2 --port $port60deg --set-config shutterspeed=$tint
-     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg
+     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
      # acquisition de l'image nadir
      /bin/sleep 0.25
      echo "Taking nadir shot"
      gphoto2 --port $portnadir --set-config shutterspeed=$tint
-     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir
+     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
 #     /bin/sleep 1
      # backup images
      cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
