@@ -321,7 +321,9 @@ do time1=`date +%s` # initial time
      # Choice: 52 Bulb
      
 
-     time2=`date +%s`
+
+   done
+   time2=`date +%s`
      let idle=20-$time2+$time1  # one measurement every 20 sec
      echo $idle $time1 $time2
      if [ $idle -lt 0 ]
@@ -329,7 +331,6 @@ do time1=`date +%s` # initial time
      fi
      echo "Wait " $idle "s before next acquisition."
      /bin/sleep $idle
-   done
 done
 echo "End of hablan.bash"
 exit 0
