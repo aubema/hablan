@@ -198,6 +198,12 @@ do time1=`date +%s` # initial time
       
      
      # acquiring images at nominal shutterspeed 1/100 s
+     y=`date +%Y`
+     mo=`date +%m`
+     d=`date +%d`
+     H=`date +%H`
+     M=`date +%M`
+     S=`date +%S`
      datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
      tint=35 # 1/100th of a second
      tinteg="_t100"
@@ -206,13 +212,12 @@ do time1=`date +%s` # initial time
      # acquisition de l'image 60deg  
      echo "Taking 60deg shot"
      gphoto2 --port $port60deg --set-config shutterspeed=$tint
-     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
+     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg
      # acquisition de l'image nadir
      /bin/sleep 0.25
      echo "Taking nadir shot"
      gphoto2 --port $portnadir --set-config shutterspeed=$tint
-     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
-     /bin/sleep 8
+     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir
      # backup images
      cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
      mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
@@ -233,6 +238,12 @@ do time1=`date +%s` # initial time
       # goto target azimuth - rotate the camera assembly
       /usr/local/bin/rotate.py $angle 1     
      # acquiring images at higher shutterspeed 1/400 s for intense sources
+     y=`date +%Y`
+     mo=`date +%m`
+     d=`date +%d`
+     H=`date +%H`
+     M=`date +%M`
+     S=`date +%S`
      datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
      tint=41 # 1/100th of a second
      tinteg="_t400"
@@ -241,13 +252,13 @@ do time1=`date +%s` # initial time
      # acquisition de l'image 60deg  
      echo "Taking 60deg shot"
      gphoto2 --port $port60deg --set-config shutterspeed=$tint
-     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
+     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg
      # acquisition de l'image nadir
      /bin/sleep 0.25
      echo "Taking nadir shot"
      gphoto2 --port $portnadir --set-config shutterspeed=$tint
-     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
-     /bin/sleep 8
+     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir
+#     /bin/sleep 1
      # backup images
      cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
      mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
