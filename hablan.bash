@@ -73,7 +73,7 @@ targetazim=" -144 -72 0 72 144 "
 #
 #
 # wait for the gps startup
-echo "Waiting 15 seconds for the gps & camera startup"
+echo "Waiting 15 seconds for the gps & cameras startup"
 /bin/sleep 15
 gphoto2 --auto-detect
 # reset the gps
@@ -168,7 +168,7 @@ do time1=`date +%s` # initial time
          if [ $tint == 35 ]
          then tinteg="_t100"
          elif [ $tint == 41 ]
-              tinteg="_t400"
+         then tinteg="_t400"
          fi
          # set cameras shutterspeed
          gphoto2 --port $port60deg --set-config shutterspeed=$tint
