@@ -4,6 +4,7 @@
 import RPi.GPIO as GPIO
 import sys
 GPIO.setmode(GPIO.BCM) # GPIO Numbers instead of board numbers
+GPIO.setwarnings(False)
 RELAY_GPIO = int(sys.argv[1])
 STATE = int(sys.argv[2])
 GPIO.setup(RELAY_GPIO, GPIO.OUT) # GPIO Assign mode
