@@ -148,7 +148,7 @@ do time1=`date +%s` # initial time
    fi
 
    # loop over angles (5 values)
-   targetazim=( -144 -72 0 72 144 )
+   targetazim=" -144 -72 0 72 144 "
    for a in $targetazim
    do echo "try to go to " $a
       # goto zero position
