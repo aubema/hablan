@@ -62,7 +62,7 @@ TlimCam=5   # minimum temperature in camera assembly
 TlimHub=5   # minimum temperature in the hub
 
 nobs=9999  		# number of images to acquire; if 9999 then infinity
-serialnadir="00000000000000003282741003386996"
+serialnadir="00000000000000003282741003379044"
 #
 #
 # wait for the gps startup
@@ -103,6 +103,9 @@ then portnadir=$port1
 else portnadir=$port2
      port60deg=$port1
 fi
+# set iso to 6400 for both cameras
+gphoto2 --port $portnadir --set-config iso=20
+gphoto2 --port $port60deg --set-config iso=20
 #
 # main loop
 #
@@ -150,19 +153,7 @@ do time1=`date +%s` # initial time
    # loop over angles (5 values)
    targetazim=" -144 -72 0 72 144 "
    for a in $targetazim
-   do echo "try to go to " $a
-      # goto zero position
-      /usr/local/bin/zero_pos.py
-      /usr/local/bin/heading_angle.py > bidon1.tmp
-      read bidon azim0 bidon < bidon1.tmp
-      echo "azim0 " $azim0
-      let 'angle=(a-azim0)*750/360'
-      echo "angle " $angle 
-      # goto target azimuth - rotate the camera assembly
-      /usr/local/bin/rotate.py $angle 1
-   
-      
-     n=0
+   do n=0
      y=`date +%Y`
      mo=`date +%m`
      d=`date +%d`
@@ -170,10 +161,7 @@ do time1=`date +%s` # initial time
      M=`date +%M`
      S=`date +%S`
      nomfich=$y"-"$mo"-"$d
-     time=$y"-"$mo"-"$d" "$H":"$M":"$S
-     datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
-     nomfich60deg=$datetime"_60deg_"$a".arw"
-     nomfichnadir=$datetime"_nadir_"$a".arw"   
+     time=$y"-"$mo"-"$d" "$H":"$M":"$S  
 
      if [ ! -d /var/www/html/data/$y ]
      then mkdir /var/www/html/data/$y
@@ -196,12 +184,33 @@ do time1=`date +%s` # initial time
      # writing into log file
      echo $time $lat $lon $alt $THub $HHub $TCam $HCam $nomfich60deg $nomfichnadir >> /var/www/html/data/$y/$mo/$d/$nomfich.log
      echo $time $lat $lon $alt $THub $HHub $TCam $HCam $nomfich60deg $nomfichnadir >> /home/sand/backup/$y/$mo/$d/$nomfich.log
-     # acquisition de l'image 60deg
+     echo "try to go to " $a
+      # goto zero position
+      /usr/local/bin/zero_pos.py
+      /usr/local/bin/heading_angle.py > bidon1.tmp
+      read bidon azim0 bidon < bidon1.tmp
+      echo "azim0 " $azim0
+      let 'angle=(a-azim0)*750/360'
+      echo "angle " $angle 
+      # goto target azimuth - rotate the camera assembly
+      /usr/local/bin/rotate.py $angle 1
+   
+      
+     
+     # acquiring images at nominal shutterspeed 1/100 s
+     datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
+     tint=35 # 1/100th of a second
+     tinteg="_t100"
+     nomfich60deg=$datetime"_60deg_"$a$tinteg".arw"
+     nomfichnadir=$datetime"_nadir_"$a$tinteg".arw" 
+     # acquisition de l'image 60deg  
      echo "Taking 60deg shot"
+     gphoto2 --port $port60deg --set-config shutterspeed=$tint
      gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
      # acquisition de l'image nadir
      /bin/sleep 0.25
      echo "Taking nadir shot"
+     gphoto2 --port $portnadir --set-config shutterspeed=$tint
      gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
      /bin/sleep 8
      # backup images
@@ -209,6 +218,97 @@ do time1=`date +%s` # initial time
      mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
      cp -f $nomfichnadir /var/www/html/data/$y/$mo/$d/$nomfichnadir
      mv -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
+     #
+     #
+     #
+     #
+     echo "try to go to " $a
+      # goto zero position
+      /usr/local/bin/zero_pos.py
+      /usr/local/bin/heading_angle.py > bidon1.tmp
+      read bidon azim0 bidon < bidon1.tmp
+      echo "azim0 " $azim0
+      let 'angle=(a-azim0)*750/360'
+      echo "angle " $angle 
+      # goto target azimuth - rotate the camera assembly
+      /usr/local/bin/rotate.py $angle 1     
+     # acquiring images at higher shutterspeed 1/400 s for intense sources
+     datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
+     tint=41 # 1/100th of a second
+     tinteg="_t400"
+     nomfich60deg=$datetime"_60deg_"$a$tinteg".arw"
+     nomfichnadir=$datetime"_nadir_"$a$tinteg".arw" 
+     # acquisition de l'image 60deg  
+     echo "Taking 60deg shot"
+     gphoto2 --port $port60deg --set-config shutterspeed=$tint
+     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
+     # acquisition de l'image nadir
+     /bin/sleep 0.25
+     echo "Taking nadir shot"
+     gphoto2 --port $portnadir --set-config shutterspeed=$tint
+     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
+     /bin/sleep 8
+     # backup images
+     cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
+     mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
+     cp -f $nomfichnadir /var/www/html/data/$y/$mo/$d/$nomfichnadir
+     mv -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
+     
+     
+     # Choice: 0 30
+     # Choice: 1 25
+     # Choice: 2 20
+     # Choice: 3 15
+     # Choice: 4 13
+     # Choice: 5 10
+     # Choice: 6 8
+     # Choice: 7 6
+     # Choice: 8 5
+     # Choice: 9 4
+     # Choice: 10 32/10
+     # Choice: 11 25/10
+     # Choice: 12 2
+     # Choice: 13 16/10
+     # Choice: 14 13/10
+     # Choice: 15 1
+     # Choice: 16 8/10
+     # Choice: 17 6/10
+     # Choice: 18 5/10
+     # Choice: 19 4/10
+     # Choice: 20 1/3
+     # Choice: 21 1/4
+     # Choice: 22 1/5
+     # Choice: 23 1/6
+     # Choice: 24 1/8
+     # Choice: 25 1/10
+     # Choice: 26 1/13
+     # Choice: 27 1/15
+     # Choice: 28 1/20
+     # Choice: 29 1/25
+     # Choice: 30 1/30
+     # Choice: 31 1/40
+     # Choice: 32 1/50
+     # Choice: 33 1/60
+     # Choice: 34 1/80
+     # Choice: 35 1/100
+     # Choice: 36 1/125
+     # Choice: 37 1/160
+     # Choice: 38 1/200
+     # Choice: 39 1/250
+     # Choice: 40 1/320
+     # Choice: 41 1/400
+     # Choice: 42 1/500
+     # Choice: 43 1/640
+     # Choice: 44 1/800
+     # Choice: 45 1/1000
+     # Choice: 46 1/1250
+     # Choice: 47 1/1600
+     # Choice: 48 1/2000
+     # Choice: 49 1/2500
+     # Choice: 50 1/3200
+     # Choice: 51 1/4000
+     # Choice: 52 Bulb
+     
 
      time2=`date +%s`
      let idle=20-$time2+$time1  # one measurement every 20 sec
