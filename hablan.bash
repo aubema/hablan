@@ -85,7 +85,7 @@ camconnected=`grep -c "" camera-list.tmp`
 if [ $camconnected -ne "4" ]
 then echo "Not enough cameras attached" $camconnected
      echo "Please check cables"
-     exit 2
+#     exit 2
 fi
 head -3 camera-list.tmp | tail -1 > bidon.tmp
 read bidon bidon bidon port1 bidon < bidon.tmp
@@ -155,6 +155,7 @@ do time1=`date +%s` # initial time
       /usr/local/bin/heading_angle.py > bidon1.tmp
       read bidon azim0 bidon < bidon1.tmp
       angle=(a-azim0)*750/360
+      print("angle",angle)
       # goto target azimuth - rotate the camera assembly
       /usr/local/bin/rotate.py $angle 1
    
