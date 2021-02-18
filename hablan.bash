@@ -150,12 +150,13 @@ do time1=`date +%s` # initial time
    # loop over angles (5 values)
    targetazim=( -144 -72 0 72 144 )
    for a in $targetazim
-   do # goto zero position
+   do echo "try to go to " $a
+      # goto zero position
       /usr/local/bin/zero_pos.py
       /usr/local/bin/heading_angle.py > bidon1.tmp
       read bidon azim0 bidon < bidon1.tmp
       angle=(a-azim0)*750/360
-      print("angle",angle)
+      echo "angle " $angle 
       # goto target azimuth - rotate the camera assembly
       /usr/local/bin/rotate.py $angle 1
    
