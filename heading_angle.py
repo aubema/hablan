@@ -67,6 +67,6 @@ if(heading < 0):
     heading = heading + 2*pi
 
 #convert into angle
-heading_angle = int(heading * 180/pi) + declination
+heading_angle = int(heading * 180/pi + declination)
 #print x, y, z
-print "Heading_Angle= ", round(heading_angle,0), heading_angle
+print("Heading_Angle= ", heading_angle)
