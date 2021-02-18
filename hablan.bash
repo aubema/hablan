@@ -217,9 +217,11 @@ do time1=`date +%s` # initial time
          /bin/sleep 8.0         
          # backup images
          cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
-         mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
+         cp -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
          cp -f $nomfichnadir /var/www/html/data/$y/$mo/$d/$nomfichnadir
-         mv -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
+         cp -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
+         rm -f $nomfich60deg
+         rm -f $nomfichnadir
       done   
    done
    time2=`date +%s`
