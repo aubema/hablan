@@ -60,9 +60,16 @@ gpioTCam=15
 gpioTHub=14
 TlimCam=5   # minimum temperature in camera assembly
 TlimHub=5   # minimum temperature in the hub
-
-nobs=9999  		# number of images to acquire; if 9999 then infinity
-serialnadir="00000000000000003282741003379044"
+# number of images to acquire; if 9999 then infinity
+nobs=9999
+serialnadir="00000000000000003282741003379044"  # nadir view camera serial number
+targetshutter=" 35 41 "
+# Choices: 0 30; 1 25; 2 20; 3 15; 4 13; 5 10; 6 8; 7 6; 8 5; 9 4; 10 32/10; 11 25/10; 12 2; 13 16/10
+# 14 13/10; 15 1; 16 8/10; 17 6/10; 18 5/10; 19 4/10; 20 1/3; 21 1/4; 22 1/5; 23 1/6; 24 1/8; 25 1/10
+# 26 1/13; 27 1/15; 28 1/20; 29 1/25; 30 1/30; 31 1/40; 32 1/50; 33 1/60; 34 1/80; 35 1/100; 36 1/125
+# 37 1/160; 38 1/200; 39 1/250; 40 1/320; 41 1/400; 42 1/500; 43 1/640; 44 1/800; 45 1/1000; 46 1/1250
+# 47 1/1600; 48 1/2000; 49 1/2500; 50 1/3200; 51 1/4000; 52 Bulb
+targetazim=" -144 -72 0 72 144 "
 #
 #
 # wait for the gps startup
@@ -77,24 +84,20 @@ echo "Set gps in airborne mode"
 gpsctl -D 5 -x "\xB5\x62\x06\x24\x24\x00\xFF\xFF\x06\x03\x00\x00\x00\x00\x10\x27\x00\x00\x05\x00\xFA\x00\xFA\x00\x64\x00\x2C\x01\x00\x3C\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x52\xE8" /dev/$gpsport
 # gpsd will automatically restart after a few seconds
 /bin/sleep 10
-#
-# trouver les ports sur lesquels les cameras sont connectes
+# find ports to the cameras
 echo "Looking for cameras ports"
 gphoto2 --auto-detect > camera-list.tmp
 camconnected=`grep -c "" camera-list.tmp`
 if [ $camconnected -ne "4" ]
 then echo "Not enough cameras attached" $camconnected
      echo "Please check cables"
-#     exit 2
+     exit 2
 fi
 head -3 camera-list.tmp | tail -1 > bidon.tmp
 read bidon bidon bidon port1 bidon < bidon.tmp
 head -4 camera-list.tmp | tail -1 > bidon.tmp
 read bidon bidon bidon port2 bidon < bidon.tmp
-
-echo $port1 $port2
-
-# identifier le port de la nadir grace au serial number
+# find the port of the nadir view camera
 gphoto2 --port $port1 --summary | grep Serial > bidon.tmp
 read bidon bidon serial bidon < bidon.tmp
 if [ $serial == $serialnadir ]
@@ -149,186 +152,84 @@ do time1=`date +%s` # initial time
    if [  $nobs != 9999 ] 
    then let i=i+1 #   never ending loop
    fi
-
-   # loop over angles (5 values)
-   targetazim=" -144 -72 0 72 144 "
+   # loop over angles in degrees (5 values to fill half of a sphere)
    for a in $targetazim
-   do n=0
-     y=`date +%Y`
-     mo=`date +%m`
-     d=`date +%d`
-     H=`date +%H`
-     M=`date +%M`
-     S=`date +%S`
-     nomfich=$y"-"$mo"-"$d
-     time=$y"-"$mo"-"$d" "$H":"$M":"$S  
-
-     if [ ! -d /var/www/html/data/$y ]
-     then mkdir /var/www/html/data/$y
-     fi
-     if [ ! -d /var/www/html/data/$y/$mo ]
-     then /bin/mkdir /var/www/html/data/$y/$mo
-     fi
-     if [ ! -d /var/www/html/data/$y/$mo/$d ]
-     then /bin/mkdir /var/www/html/data/$y/$mo/$d
-     fi
-     if [ ! -d /home/sand/backup/$y ]
-     then mkdir /home/sand/backup/$y
-     fi
-     if [ ! -d /home/sand/backup/$y/$mo ]
-     then /bin/mkdir /home/sand/backup/$y/$mo
-     fi
-     if [ ! -d /home/sand/backup/$y/$mo/$d ]
-     then /bin/mkdir /home/sand/backup/$y/$mo/$d
-     fi
-     # writing into log file
-     echo $time $lat $lon $alt $THub $HHub $TCam $HCam $nomfich60deg $nomfichnadir >> /var/www/html/data/$y/$mo/$d/$nomfich.log
-     echo $time $lat $lon $alt $THub $HHub $TCam $HCam $nomfich60deg $nomfichnadir >> /home/sand/backup/$y/$mo/$d/$nomfich.log
-     echo "try to go to " $a
-      # goto zero position
-      /usr/local/bin/zero_pos.py
-      /usr/local/bin/heading_angle.py > bidon1.tmp
-      read bidon azim0 bidon < bidon1.tmp
-      echo "azim0 " $azim0
-      let 'angle=(a-azim0)*750/360'
-      echo "angle " $angle 
-      # goto target azimuth - rotate the camera assembly
-      /usr/local/bin/rotate.py $angle 1
-   
-      
-     
-     # acquiring images at nominal shutterspeed 1/100 s
-     y=`date +%Y`
-     mo=`date +%m`
-     d=`date +%d`
-     H=`date +%H`
-     M=`date +%M`
-     S=`date +%S`
-     datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
-     tint=35 # 1/100th of a second
-     tinteg="_t100"
-     nomfich60deg=$datetime"_60deg_"$a$tinteg".arw"
-     nomfichnadir=$datetime"_nadir_"$a$tinteg".arw" 
-     # acquisition de l'image 60deg  
+   do for tint in $targetshutter
+      do echo "Move to " $a
+         # goto zero position
+         /usr/local/bin/zero_pos.py
+         /usr/local/bin/heading_angle.py > bidon1.tmp
+         read bidon azim0 bidon < bidon1.tmp
+    echo "azim0 " $azim0
+         let 'angle=(a-azim0)*750/360'
+    echo "angle " $angle 
+         # goto target azimuth - rotate the camera assembly
+         /usr/local/bin/rotate.py $angle 1
+         if [ $tint == 35 ]
+         then tinteg="_t100"
+         elif [ $tint == 41 ]
+              tinteg="_t400"
+         fi
+         # set cameras shutterspeed
+         gphoto2 --port $port60deg --set-config shutterspeed=$tint
+         gphoto2 --port $portnadir --set-config shutterspeed=$tint
+         y=`date +%Y`
+         mo=`date +%m`
+         d=`date +%d`
+         H=`date +%H`
+         M=`date +%M`
+         S=`date +%S`
+         nomfich=$y"-"$mo"-"$d
+         time=$y" "$mo" "$d" "$H" "$M" "$S
+         datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
+         # making directory tree
+         if [ ! -d /var/www/html/data/$y ]
+         then mkdir /var/www/html/data/$y
+         fi
+         if [ ! -d /var/www/html/data/$y/$mo ]
+         then /bin/mkdir /var/www/html/data/$y/$mo
+         fi
+         if [ ! -d /var/www/html/data/$y/$mo/$d ]
+         then /bin/mkdir /var/www/html/data/$y/$mo/$d
+         fi
+         if [ ! -d /home/sand/backup/$y ]
+         then mkdir /home/sand/backup/$y
+         fi
+         if [ ! -d /home/sand/backup/$y/$mo ]
+         then /bin/mkdir /home/sand/backup/$y/$mo
+         fi
+         if [ ! -d /home/sand/backup/$y/$mo/$d ]
+         then /bin/mkdir /home/sand/backup/$y/$mo/$d
+         fi
+         # setting file names
+         nomfich60deg=$datetime"_60deg_"$a$tinteg".arw"
+         nomfichnadir=$datetime"_nadir_"$a$tinteg".arw"
+         # writing into log file
+         echo $time $lat $lon $alt $THub $HHub $TCam $HCam $nomfich60deg $nomfichnadir >> /var/www/html/data/$y/$mo/$d/$nomfich.log
+         echo $time $lat $lon $alt $THub $HHub $TCam $HCam $nomfich60deg $nomfichnadir >> /home/sand/backup/$y/$mo/$d/$nomfich.log
+         # acquisition de l'image 60deg  
      echo "Taking 60deg shot"
-     gphoto2 --port $port60deg --set-config shutterspeed=$tint
-     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
-     # acquisition de l'image nadir
-     echo "Taking nadir shot"
-     gphoto2 --port $portnadir --set-config shutterspeed=$tint
-     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
-     # backup images
-     cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
-     mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
-     cp -f $nomfichnadir /var/www/html/data/$y/$mo/$d/$nomfichnadir
-     mv -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
-     /bin/sleep 1.0
-     #
-     #
-     #
-     #
-     echo "try to go to " $a
-      # goto zero position
-      /usr/local/bin/zero_pos.py
-      /usr/local/bin/heading_angle.py > bidon1.tmp
-      read bidon azim0 bidon < bidon1.tmp
-      echo "azim0 " $azim0
-      let 'angle=(a-azim0)*750/360'
-      echo "angle " $angle 
-      # goto target azimuth - rotate the camera assembly
-      /usr/local/bin/rotate.py $angle 1     
-     # acquiring images at higher shutterspeed 1/400 s for intense sources
-     y=`date +%Y`
-     mo=`date +%m`
-     d=`date +%d`
-     H=`date +%H`
-     M=`date +%M`
-     S=`date +%S`
-     datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
-     tint=41 # 1/100th of a second
-     tinteg="_t400"
-     nomfich60deg=$datetime"_60deg_"$a$tinteg".arw"
-     nomfichnadir=$datetime"_nadir_"$a$tinteg".arw" 
-     # acquisition de l'image 60deg  
-     echo "Taking 60deg shot"
-     gphoto2 --port $port60deg --set-config shutterspeed=$tint
-     gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
-     # acquisition de l'image nadir
-     echo "Taking nadir shot"
-     gphoto2 --port $portnadir --set-config shutterspeed=$tint
-     gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
-     # backup images
-     cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
-     mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
-     cp -f $nomfichnadir /var/www/html/data/$y/$mo/$d/$nomfichnadir
-     mv -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
-     /bin/sleep 1.0     
-     
-     # Choice: 0 30
-     # Choice: 1 25
-     # Choice: 2 20
-     # Choice: 3 15
-     # Choice: 4 13
-     # Choice: 5 10
-     # Choice: 6 8
-     # Choice: 7 6
-     # Choice: 8 5
-     # Choice: 9 4
-     # Choice: 10 32/10
-     # Choice: 11 25/10
-     # Choice: 12 2
-     # Choice: 13 16/10
-     # Choice: 14 13/10
-     # Choice: 15 1
-     # Choice: 16 8/10
-     # Choice: 17 6/10
-     # Choice: 18 5/10
-     # Choice: 19 4/10
-     # Choice: 20 1/3
-     # Choice: 21 1/4
-     # Choice: 22 1/5
-     # Choice: 23 1/6
-     # Choice: 24 1/8
-     # Choice: 25 1/10
-     # Choice: 26 1/13
-     # Choice: 27 1/15
-     # Choice: 28 1/20
-     # Choice: 29 1/25
-     # Choice: 30 1/30
-     # Choice: 31 1/40
-     # Choice: 32 1/50
-     # Choice: 33 1/60
-     # Choice: 34 1/80
-     # Choice: 35 1/100
-     # Choice: 36 1/125
-     # Choice: 37 1/160
-     # Choice: 38 1/200
-     # Choice: 39 1/250
-     # Choice: 40 1/320
-     # Choice: 41 1/400
-     # Choice: 42 1/500
-     # Choice: 43 1/640
-     # Choice: 44 1/800
-     # Choice: 45 1/1000
-     # Choice: 46 1/1250
-     # Choice: 47 1/1600
-     # Choice: 48 1/2000
-     # Choice: 49 1/2500
-     # Choice: 50 1/3200
-     # Choice: 51 1/4000
-     # Choice: 52 Bulb
-     
-
-
+         gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
+         # acquisition de l'image nadir
+     echo "Taking nadir shot" 
+         gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
+         # waiting for the images to be saved
+         /bin/sleep 2.0         
+         # backup images
+         cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
+         mv -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
+         cp -f $nomfichnadir /var/www/html/data/$y/$mo/$d/$nomfichnadir
+         mv -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
+      done   
    done
    time2=`date +%s`
-     let idle=20-$time2+$time1  # one measurement every 20 sec
-     echo $idle $time1 $time2
-     if [ $idle -lt 0 ]
-     then let idle=0
-     fi
-     echo "Wait " $idle "s before next acquisition."
-     /bin/sleep $idle
+   let idle=20-$time2+$time1  # one measurement every 20 sec
+   echo $idle $time1 $time2
+   if [ $idle -lt 0 ]
+   then let idle=0
+   fi
+   echo "Wait " $idle "s before next acquisition."
+   /bin/sleep $idle
 done
 echo "End of hablan.bash"
 exit 0
