@@ -12,9 +12,11 @@ import adafruit_dht
 dhtDevice = adafruit_dht.DHT22(board.D7, use_pulseio=False)
 temperature1_c = dhtDevice.temperature
 humidity1 = dhtDevice.humidity
+print(temperature1_c)
 dhtDevice = adafruit_dht.DHT22(board.D1, use_pulseio=False)
 temperature2_c = dhtDevice.temperature
 humidity2 = dhtDevice.humidity
+print(temperature2_c)
 test=temperature1_c+temperature2_c+humidity1+humidity2
 try: test
 except NameError: print ("ERR")
