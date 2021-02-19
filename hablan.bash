@@ -109,6 +109,18 @@ fi
 # set iso to 6400 for both cameras
 gphoto2 --port $portnadir --set-config iso=20
 gphoto2 --port $port60deg --set-config iso=20
+gphoto2 --port $portnadir --set-config imagequality=3
+gphoto2 --port $port60deg --set-config imagequality=3
+gphoto2 --port $portnadir --set-config aspectratio=0
+gphoto2 --port $port60deg --set-config aspectratio=0
+gphoto2 --port $portnadir --set-config capturemode=0
+gphoto2 --port $port60deg --set-config capturemode=0
+gphoto2 --port $portnadir --set-config flashmode=0
+gphoto2 --port $port60deg --set-config flashmode=0
+gphoto2 --port $portnadir --set-config exposurecompensation=0
+gphoto2 --port $port60deg --set-config exposurecompensation=0
+gphoto2 --port $portnadir --set-config whitebalance=1
+gphoto2 --port $port60deg --set-config whitebalance=1
 #
 # main loop
 #
