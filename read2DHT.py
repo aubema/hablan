@@ -13,4 +13,4 @@ dhtDevice = adafruit_dht.DHT22(board.D7, use_pulseio=False)
 temperature1_c = dhtDevice.temperature
 dhtDevice = adafruit_dht.DHT22(board.D1, use_pulseio=False)
 temperature2_c = dhtDevice.temperature
-print("OK", temperature1_c, temperature2_c2)
+print("OK", temperature1_c, temperature2_c)
