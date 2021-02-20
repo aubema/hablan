@@ -142,8 +142,8 @@ do time1=`date +%s` # initial time
    # reading temperatures in cam assembly and hub
    # and start heater if required
    # camera assembly sensor connected to gpio1 and hub sensor in gpio7
-   python3 /usr/local/bin/read2DHT.py > bidon.tmp
-   read stateT THub TCam bidon < /root/bidon.tmp
+   python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > bidon.tmp
+   read stateT THub bidon TCam bidon < /root/bidon.tmp
    # error detection
    if [ $stateT != "OK" ]
    then let Thub=9999
