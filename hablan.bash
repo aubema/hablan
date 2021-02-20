@@ -143,13 +143,11 @@ do time1=`date +%s` # initial time
    # and start heater if required
    # camera assembly sensor connected to gpio1 and hub sensor in gpio7
    python3 /usr/local/bin/read2DHT.py > bidon.tmp
-   read stateT THub HHub TCam HCam bidon < /root/bidon.tmp
+   read stateT THub TCam bidon < /root/bidon.tmp
    # error detection
    if [ $stateT != "OK" ]
    then let Thub=9999
-        let Hhub=9999
         let TCam=9999
-        let HCam=9999
    fi
    if [ $THub -lt $TlimHub ]
    then /usr/local/bin/relay.py $gpioTHub 1
@@ -217,8 +215,8 @@ do time1=`date +%s` # initial time
          nomfich60deg=$datetime"_60deg_"$a$tinteg".arw"
          nomfichnadir=$datetime"_nadir_"$a$tinteg".arw"
          # writing into log file
-         echo $time $lat $lon $alt $THub $HHub $TCam $HCam $nomfich60deg $nomfichnadir >> /var/www/html/data/$y/$mo/$d/$nomfich.log
-         echo $time $lat $lon $alt $THub $HHub $TCam $HCam $nomfich60deg $nomfichnadir >> /home/sand/backup/$y/$mo/$d/$nomfich.log
+         echo $time $lat $lon $alt $THub $TCam $nomfich60deg $nomfichnadir >> /var/www/html/data/$y/$mo/$d/$nomfich.log
+         echo $time $lat $lon $alt $THub $TCam $nomfich60deg $nomfichnadir >> /home/sand/backup/$y/$mo/$d/$nomfich.log
          # acquisition de l'image 60deg  
      echo "Taking 60deg shot"
          gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
