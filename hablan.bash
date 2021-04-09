@@ -93,13 +93,13 @@ then echo "Not enough cameras attached" $camconnected
      echo "Please check cables"
      exit 2
 fi
-head -3 camera-list.tmp | tail -1 > bidon.tmp
-read bidon bidon bidon port1 bidon < bidon.tmp
-head -4 camera-list.tmp | tail -1 > bidon.tmp
-read bidon bidon bidon port2 bidon < bidon.tmp
+head -3 camera-list.tmp | tail -1 > /home/sand/bidon.tmp
+read bidon bidon bidon port1 bidon < /home/sand/bidon.tmp
+head -4 camera-list.tmp | tail -1 > /home/sand/bidon.tmp
+read bidon bidon bidon port2 bidon < /home/sand/bidon.tmp
 # find the port of the nadir view camera
-gphoto2 --port $port1 --summary | grep Serial > bidon.tmp
-read bidon bidon serial bidon < bidon.tmp
+gphoto2 --port $port1 --summary | grep Serial > /home/sand/bidon.tmp
+read bidon bidon serial bidon < /home/sand/bidon.tmp
 if [ $serial == $serialnadir ]
 then portnadir=$port1
      port60deg=$port2
@@ -146,7 +146,7 @@ do time1=`date +%s` # initial time
    read stateT THub bidon TCam bidon < /home/sand/bidon.tmp
    # error detection
    if [ $stateT != "OK" ]
-   then let Thub=9999
+   then let THub=9999
         let TCam=9999
    fi
    if [ $THub -lt $TlimHub ]
@@ -168,8 +168,8 @@ do time1=`date +%s` # initial time
       do echo "Move to " $a
          # goto zero position
          /usr/local/bin/zero_pos.py
-         /usr/local/bin/heading_angle.py > bidon1.tmp
-         read bidon azim0 bidon < bidon1.tmp
+         /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
+         read bidon azim0 bidon < /home/sand/bidon1.tmp
     echo "azim0 " $azim0
          let 'angle=(a-azim0)*750/360'
     echo "angle " $angle 
