@@ -170,7 +170,8 @@ do time1=`date +%s` # initial time
               /usr/local/bin/relay.py $gpioTCam 0
          else echo "Cam heating off"
               /usr/local/bin/relay.py $gpioTCam 1
-         fi echo "Move to " $a
+         fi 
+         echo "Move to " $a
          # goto zero position
          /usr/local/bin/zero_pos.py
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
