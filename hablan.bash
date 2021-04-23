@@ -150,12 +150,16 @@ do time1=`date +%s` # initial time
         let TCam=9999
    fi
    if [ $THub -lt $TlimHub ]
-   then /usr/local/bin/relay.py $gpioTHub 1
-   else /usr/local/bin/relay.py $gpioTHub 0
+   then echo "Hub heating on"
+        /usr/local/bin/relay.py $gpioTHub 0
+   else echo "Hub heating off"
+        /usr/local/bin/relay.py $gpioTHub 1
    fi
    if [ $TCam -lt $TlimCam ]
-   then /usr/local/bin/relay.py $gpioTCam 1
-   else /usr/local/bin/relay.py $gpioTCam 0
+   then echo "Cam heating on"
+        /usr/local/bin/relay.py $gpioTCam 0
+   else echo "Cam heating off"
+        /usr/local/bin/relay.py $gpioTCam 1
    fi   
    echo "=========================="
    echo "Start image acquisition #" $count
