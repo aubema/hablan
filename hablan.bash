@@ -56,8 +56,8 @@ globalpos () {
 # activate gps option 0=off 1=on
 gpsf=1
 gpsport="ttyACM0"
-gpioTCam=15
-gpioTHub=14
+gpioTCam=14
+gpioTHub=15
 TlimCam=5   # minimum temperature in camera assembly
 TlimHub=5   # minimum temperature in the hub
 # number of images to acquire; if 9999 then infinity
