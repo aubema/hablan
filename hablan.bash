@@ -149,6 +149,8 @@ do time1=`date +%s` # initial time
    then let THub=9999
         let TCam=9999
    fi
+   echo "THub:" $THub "Tmin:" $TlimHub
+   echo "TCam:" $TCam "Tmin:" $TlimCam
    if [ $THub -lt $TlimHub ]
    then echo "Hub heating on"
         /usr/local/bin/relay.py $gpioTHub 0
