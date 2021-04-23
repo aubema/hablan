@@ -154,8 +154,8 @@ do time1=`date +%s` # initial time
          read stateT THub bidon TCam bidon < /home/sand/bidon.tmp
          # error detection
          if [ $stateT != "OK" ]
-         then let THub=9999
-              let TCam=9999
+         then THub=9999
+              TCam=9999
          fi
          echo "THub:" $THub "Tmin:" $TlimHub
          echo "TCam:" $TCam "Tmin:" $TlimCam
