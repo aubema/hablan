@@ -58,8 +58,8 @@ gpsf=1
 gpsport="ttyACM0"
 gpioTCam=14
 gpioTHub=15
-TlimCam=5   # minimum temperature in camera assembly
-TlimHub=5   # minimum temperature in the hub
+TlimCam=25   # minimum temperature in camera assembly
+TlimHub=25   # minimum temperature in the hub
 # number of images to acquire; if 9999 then infinity
 nobs=9999
 serialnadir="00000000000000003282741003379044"  # nadir view camera serial number
@@ -139,30 +139,6 @@ do time1=`date +%s` # initial time
         fi
    else  echo "GPS mode off"
    fi
-   # reading temperatures in cam assembly and hub
-   # and start heater if required
-   # camera assembly sensor connected to gpio1 and hub sensor in gpio7
-   python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
-   read stateT THub bidon TCam bidon < /home/sand/bidon.tmp
-   # error detection
-   if [ $stateT != "OK" ]
-   then let THub=9999
-        let TCam=9999
-   fi
-   echo "THub:" $THub "Tmin:" $TlimHub
-   echo "TCam:" $TCam "Tmin:" $TlimCam
-   if [ $THub -lt $TlimHub ]
-   then echo "Hub heating on"
-        /usr/local/bin/relay.py $gpioTHub 0
-   else echo "Hub heating off"
-        /usr/local/bin/relay.py $gpioTHub 1
-   fi
-   if [ $TCam -lt $TlimCam ]
-   then echo "Cam heating on"
-        /usr/local/bin/relay.py $gpioTCam 0
-   else echo "Cam heating off"
-        /usr/local/bin/relay.py $gpioTCam 1
-   fi   
    echo "=========================="
    echo "Start image acquisition #" $count
    if [  $nobs != 9999 ] 
@@ -171,14 +147,35 @@ do time1=`date +%s` # initial time
    # loop over angles in degrees (5 values to fill half of a sphere)
    for a in $targetazim
    do for tint in $targetshutter
-      do echo "Move to " $a
+      do # reading temperatures in cam assembly and hub
+         # and start heater if required
+         # camera assembly sensor connected to gpio1 and hub sensor in gpio7
+         python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
+         read stateT THub bidon TCam bidon < /home/sand/bidon.tmp
+         # error detection
+         if [ $stateT != "OK" ]
+         then let THub=9999
+              let TCam=9999
+         fi
+         echo "THub:" $THub "Tmin:" $TlimHub
+         echo "TCam:" $TCam "Tmin:" $TlimCam
+         if [ $THub -lt $TlimHub ]
+         then echo "Hub heating on"
+              /usr/local/bin/relay.py $gpioTHub 0
+         else echo "Hub heating off"
+              /usr/local/bin/relay.py $gpioTHub 1
+         fi
+         if [ $TCam -lt $TlimCam ]
+         then echo "Cam heating on"
+              /usr/local/bin/relay.py $gpioTCam 0
+         else echo "Cam heating off"
+              /usr/local/bin/relay.py $gpioTCam 1
+         fi echo "Move to " $a
          # goto zero position
          /usr/local/bin/zero_pos.py
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
          read bidon azim0 bidon < /home/sand/bidon1.tmp
-    echo "azim0 " $azim0
          let 'angle=(a-azim0)*750/360'
-    echo "angle " $angle 
          # goto target azimuth - rotate the camera assembly
          /usr/local/bin/rotate.py $angle 1
          if [ $tint == 35 ]
