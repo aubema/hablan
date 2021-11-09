@@ -58,7 +58,7 @@ if reverse==0:
         if j==4:
             setStep(1,0,0,1)
             j=0
-    setStep(0,0,0,0)
+#    setStep(0,0,0,0)
 else:
     for i in range(0, steps):
         j=j+1
