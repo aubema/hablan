@@ -144,6 +144,9 @@ do time1=`date +%s` # initial time
    if [  $nobs != 9999 ] 
    then let i=i+1 #   never ending loop
    fi
+   echo "Move to zero position" $a
+   # goto zero position
+   /usr/local/bin/zero_pos.py   
    # loop over angles in degrees (5 values to fill half of a sphere)
    for a in $targetazim
    do for tint in $targetshutter
@@ -170,15 +173,7 @@ do time1=`date +%s` # initial time
               /usr/local/bin/relay.py $gpioTCam 0
          else echo "Cam heating off"
               /usr/local/bin/relay.py $gpioTCam 1
-         fi 
-         echo "Move to " $a
-         # goto zero position
-         /usr/local/bin/zero_pos.py
-         /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-         read bidon azim0 bidon < /home/sand/bidon1.tmp
-         let 'angle=(a-azim0)*750/360'
-         # goto target azimuth - rotate the camera assembly
-         /usr/local/bin/rotate.py $angle 1
+         fi
          if [ $tint == 35 ]
          then tinteg="_t100"
          elif [ $tint == 41 ]
@@ -187,6 +182,23 @@ do time1=`date +%s` # initial time
          # set cameras shutterspeed
          gphoto2 --port $port60deg --set-config shutterspeed=$tint
          gphoto2 --port $portnadir --set-config shutterspeed=$tint
+         /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
+         read bidon azim0 bidon < /home/sand/bidon1.tmp
+         let 'angle=(a-azim0)*750/360'
+         # goto target azimuth - rotate the camera assembly
+         /usr/local/bin/rotate.py $angle 1
+         # acquisition de l'image 60deg  
+     echo "Taking 60deg shot"
+         gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
+         # acquisition de l'image nadir
+     echo "Taking nadir shot" 
+         gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
+         # waiting for the images to be saved
+         /bin/sleep 1.0 
+#         let angle=-angle
+#         /usr/local/bin/rotate.py $angle 1
+#         /bin/sleep 8.0         
+         # backup images
          y=`date +%Y`
          mo=`date +%m`
          d=`date +%d`
@@ -197,6 +209,9 @@ do time1=`date +%s` # initial time
          time=$y" "$mo" "$d" "$H" "$M" "$S
          datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
          # making directory tree
+         if [ ! -d /var/www/html/data ]
+         then mkdir /var/www/html/data
+         fi         
          if [ ! -d /var/www/html/data/$y ]
          then mkdir /var/www/html/data/$y
          fi
@@ -221,18 +236,6 @@ do time1=`date +%s` # initial time
          # writing into log file
          echo $time $lat $lon $alt $THub $TCam $nomfich60deg $nomfichnadir >> /var/www/html/data/$y/$mo/$d/$nomfich.log
          echo $time $lat $lon $alt $THub $TCam $nomfich60deg $nomfichnadir >> /home/sand/backup/$y/$mo/$d/$nomfich.log
-         # acquisition de l'image 60deg  
-     echo "Taking 60deg shot"
-         gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
-         # acquisition de l'image nadir
-     echo "Taking nadir shot" 
-         gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
-         # waiting for the images to be saved
-         /bin/sleep 1.0 
-         let angle=-angle
-         /usr/local/bin/rotate.py $angle 1
-         /bin/sleep 8.0         
-         # backup images
          cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
          cp -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
          cp -f $nomfichnadir /var/www/html/data/$y/$mo/$d/$nomfichnadir
