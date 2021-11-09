@@ -182,23 +182,12 @@ do time1=`date +%s` # initial time
          # set cameras shutterspeed
          gphoto2 --port $port60deg --set-config shutterspeed=$tint
          gphoto2 --port $portnadir --set-config shutterspeed=$tint
+         
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
          read bidon azim0 bidon < /home/sand/bidon1.tmp
          let 'angle=(a-azim0)*750/360'
          # goto target azimuth - rotate the camera assembly
          /usr/local/bin/rotate.py $angle 1
-         # acquisition de l'image 60deg  
-     echo "Taking 60deg shot"
-         gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
-         # acquisition de l'image nadir
-     echo "Taking nadir shot" 
-         gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
-         # waiting for the images to be saved
-         /bin/sleep 1.0 
-         let angle=-angle
-         /usr/local/bin/rotate.py $angle 1
-         /bin/sleep 8.0         
-         # backup images
          y=`date +%Y`
          mo=`date +%m`
          d=`date +%d`
@@ -233,6 +222,19 @@ do time1=`date +%s` # initial time
          # setting file names
          nomfich60deg=$datetime"_60deg_"$a$tinteg".arw"
          nomfichnadir=$datetime"_nadir_"$a$tinteg".arw"
+         # acquisition de l'image 60deg  
+     echo "Taking 60deg shot"
+         gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
+         # acquisition de l'image nadir
+     echo "Taking nadir shot" 
+         gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
+         # waiting for the images to be saved
+         /bin/sleep 1.0 
+         let angle=-angle
+         /usr/local/bin/rotate.py $angle 1
+#         /bin/sleep 8.0         
+         # backup images
+
          # writing into log file
          echo $time $lat $lon $alt $THub $TCam $nomfich60deg $nomfichnadir >> /var/www/html/data/$y/$mo/$d/$nomfich.log
          echo $time $lat $lon $alt $THub $TCam $nomfich60deg $nomfichnadir >> /home/sand/backup/$y/$mo/$d/$nomfich.log
@@ -242,6 +244,7 @@ do time1=`date +%s` # initial time
          cp -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
          rm -f $nomfich60deg
          rm -f $nomfichnadir
+         rm -f *.arw
       done   
    done
    time2=`date +%s`
