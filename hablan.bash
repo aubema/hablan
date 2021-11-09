@@ -195,9 +195,9 @@ do time1=`date +%s` # initial time
          gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
          # waiting for the images to be saved
          /bin/sleep 1.0 
-#         let angle=-angle
-#         /usr/local/bin/rotate.py $angle 1
-#         /bin/sleep 8.0         
+         let angle=-angle
+         /usr/local/bin/rotate.py $angle 1
+         /bin/sleep 8.0         
          # backup images
          y=`date +%Y`
          mo=`date +%m`
