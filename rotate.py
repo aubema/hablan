@@ -71,4 +71,4 @@ else:
         if j==4:
             setStep(1,0,1,0)
             j=0
-    setStep(0,0,0,0)
+#    setStep(0,0,0,0)
