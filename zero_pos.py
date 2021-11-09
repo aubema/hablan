@@ -8,7 +8,7 @@ import sys
 
 # Variables steps is half a turn
 half = 375
-delay = 0.02
+delay = 0.01
 full=2*half
 destination=0
 
@@ -58,7 +58,8 @@ for i in range(0, half):
     if j==4:
         setStep(1,0,0,1)
         j=0
-# move reverse direction complete turn until sensor activated     		
+# move reverse direction complete turn until sensor activated  
+time.sleep(0.5)   		
 if destination==0:
     j=0
     for i in range(0, full):
