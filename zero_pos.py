@@ -8,7 +8,7 @@ import sys
 
 # Variables steps is half a turn
 half = 375
-delay = 0.005
+delay = 0.05
 full=2*half
 destination=0
 
