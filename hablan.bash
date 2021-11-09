@@ -187,6 +187,7 @@ do time1=`date +%s` # initial time
          read bidon azim0 bidon < /home/sand/bidon1.tmp
          let 'angle=(a-azim0)*750/360'
          # goto target azimuth - rotate the camera assembly
+         echo "Move to azimuth:" $a
          /usr/local/bin/rotate.py $angle 1
          y=`date +%Y`
          mo=`date +%m`
