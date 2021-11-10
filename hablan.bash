@@ -162,9 +162,9 @@ do time1=`date +%s` # initial time
           echo $ntry
           /bin/sleep 0.5
           if [ $ntry -eq 5 ]
-          then echo "NIL" > /home/sand/bidon.tmp
-               THub=9999
-               TCam=9999
+          then let THub=9999
+               let TCam=9999
+               echo "NIL" > /home/sand/bidon.tmp
           fi
        done
        read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
