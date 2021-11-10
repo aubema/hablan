@@ -154,11 +154,12 @@ do time1=`date +%s` # initial time
    # camera assembly sensor connected to gpio1 and hub sensor in gpio7
    
    
-   do  ntry=0
+   do  let ntry=0
        echo "" > /home/sand/bidon.tmp
        while [ ! -s bidon.tmp ] || [ $ntry -lt 5 ]
        do python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
           let ntry=ntry+1
+          echo $ntry
        done
        read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
      # error detection
