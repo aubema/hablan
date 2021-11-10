@@ -155,7 +155,7 @@ do time1=`date +%s` # initial time
    
    
    do  ntry=0
-       echo "" > /home/sand/bidon.tmp
+       >/home/sand/bidon.tmp
        while [ -s bidon.tmp ]
        do python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
           let ntry=ntry+1
