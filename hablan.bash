@@ -167,7 +167,9 @@ do time1=`date +%s` # initial time
                echo "NIL" > /home/sand/bidon.tmp
           fi
        done
-       read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
+       if [ $THub -ne 9999 ]
+       then read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
+       fi
      # error detection
 #     if [ $stateT != "OK" ]
 #     then THub=9999
