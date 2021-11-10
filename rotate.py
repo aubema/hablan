@@ -18,7 +18,7 @@ if steps<0:
    steps=-1*steps
    reverse=1
 steps=steps-1
-delaym = float(sys.argv[2]) * 0.005
+delaym = float(sys.argv[2]) * 0.007
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -49,7 +49,7 @@ def setStep(w1, w2, w3, w4):
 j=0
 if reverse==0:
     for i in range(0, steps):
-        delay=4*delaym*(1-math.sin(math.pi*i/steps))+delaym
+        delay=(4*steps/375)*delaym*(1-math.sin(math.pi*i/steps))+delaym
         j=j+1
         if j==1:
             setStep(1,0,1,0)
@@ -63,7 +63,7 @@ if reverse==0:
 #    setStep(0,0,0,0)
 else:
     for i in range(0, steps):
-        delay=4*delaym*(1-math.sin(math.pi*i/steps))+delaym    
+        delay=(4*steps/375)*delaym*(1-math.sin(math.pi*i/steps))+delaym    
         j=j+1
         if j==1:
             setStep(1,0,0,1)
