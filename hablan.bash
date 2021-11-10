@@ -238,7 +238,7 @@ do time1=`date +%s` # initial time
         echo "Taking nadir shot" 
         gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
         # waiting for the images to be saved
-        /bin/sleep 5.0
+        /bin/sleep 8.0
         
 
 #         /bin/sleep 8.0         
