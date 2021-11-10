@@ -149,90 +149,91 @@ do time1=`date +%s` # initial time
    /usr/local/bin/zero_pos.py   
    # loop over angles in degrees (5 values to fill half of a sphere)
    for a in $targetazim
-   do for tint in $targetshutter
-      do # reading temperatures in cam assembly and hub
-         # and start heater if required
-         # camera assembly sensor connected to gpio1 and hub sensor in gpio7
-         python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
-         read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
-         # error detection
-         if [ $stateT != "OK" ]
-         then THub=9999
-              TCam=9999
-         fi
-         echo "THub:" $THub "Tmin:" $TlimHub
-         echo "TCam:" $TCam "Tmin:" $TlimCam
-         if [ $THub -lt $TlimHub ]
-         then echo "Hub heating on"
-              /usr/local/bin/relay.py $gpioTHub 0
-         else echo "Hub heating off"
-              /usr/local/bin/relay.py $gpioTHub 1
-         fi
-         if [ $TCam -lt $TlimCam ]
-         then echo "Cam heating on"
-              /usr/local/bin/relay.py $gpioTCam 0
-         else echo "Cam heating off"
-              /usr/local/bin/relay.py $gpioTCam 1
-         fi
-         if [ $tint == 35 ]
-         then tinteg="_t100"
-         elif [ $tint == 41 ]
-         then tinteg="_t400"
-         fi
-         # set cameras shutterspeed
-         gphoto2 --port $port60deg --set-config shutterspeed=$tint
-         gphoto2 --port $portnadir --set-config shutterspeed=$tint
+   # reading temperatures in cam assembly and hub
+   # and start heater if required
+   # camera assembly sensor connected to gpio1 and hub sensor in gpio7
+   do  python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
+     read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
+     # error detection
+     if [ $stateT != "OK" ]
+     then THub=9999
+          TCam=9999
+     fi
+     echo "THub:" $THub "Tmin:" $TlimHub
+     echo "TCam:" $TCam "Tmin:" $TlimCam
+     if [ $THub -lt $TlimHub ]
+     then echo "Hub heating on"
+          /usr/local/bin/relay.py $gpioTHub 0
+     else echo "Hub heating off"
+          /usr/local/bin/relay.py $gpioTHub 1
+     fi
+     if [ $TCam -lt $TlimCam ]
+     then echo "Cam heating on"
+          /usr/local/bin/relay.py $gpioTCam 0
+     else echo "Cam heating off"
+          /usr/local/bin/relay.py $gpioTCam 1
+     fi
+     /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
+     read bidon azim0 bidon < /home/sand/bidon1.tmp
+     let 'angle=(a-azim0)*750/360'
+     # goto target azimuth - rotate the camera assembly
+     echo "Move to azimuth:" $a
+     /usr/local/bin/rotate.py $angle 1
+     for tint in $targetshutter
+     do if [ $tint == 35 ]
+        then tinteg="_t100"
+        elif [ $tint == 41 ]
+        then tinteg="_t400"
+        fi
+        # set cameras shutterspeed
+        gphoto2 --port $port60deg --set-config shutterspeed=$tint
+        gphoto2 --port $portnadir --set-config shutterspeed=$tint
          
-         /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-         read bidon azim0 bidon < /home/sand/bidon1.tmp
-         let 'angle=(a-azim0)*750/360'
-         # goto target azimuth - rotate the camera assembly
-         echo "Move to azimuth:" $a
-         /usr/local/bin/rotate.py $angle 1
-         y=`date +%Y`
-         mo=`date +%m`
-         d=`date +%d`
-         H=`date +%H`
-         M=`date +%M`
-         S=`date +%S`
-         nomfich=$y"-"$mo"-"$d
-         time=$y" "$mo" "$d" "$H" "$M" "$S
-         datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
-         # making directory tree
-         if [ ! -d /var/www/html/data ]
-         then mkdir /var/www/html/data
-         fi         
-         if [ ! -d /var/www/html/data/$y ]
-         then mkdir /var/www/html/data/$y
-         fi
-         if [ ! -d /var/www/html/data/$y/$mo ]
-         then /bin/mkdir /var/www/html/data/$y/$mo
-         fi
-         if [ ! -d /var/www/html/data/$y/$mo/$d ]
-         then /bin/mkdir /var/www/html/data/$y/$mo/$d
-         fi
-         if [ ! -d /home/sand/backup/$y ]
-         then mkdir /home/sand/backup/$y
-         fi
-         if [ ! -d /home/sand/backup/$y/$mo ]
-         then /bin/mkdir /home/sand/backup/$y/$mo
-         fi
-         if [ ! -d /home/sand/backup/$y/$mo/$d ]
-         then /bin/mkdir /home/sand/backup/$y/$mo/$d
-         fi
-         # setting file names
-         nomfich60deg=$datetime"_60deg_"$a$tinteg".arw"
-         nomfichnadir=$datetime"_nadir_"$a$tinteg".arw"
-         # acquisition de l'image 60deg  
-     echo "Taking 60deg shot"
-         gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
-         # acquisition de l'image nadir
-     echo "Taking nadir shot" 
-         gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
-         # waiting for the images to be saved
-         /bin/sleep 1.0 
-         let angle=-angle
-         /usr/local/bin/rotate.py $angle 1
+
+        y=`date +%Y`
+        mo=`date +%m`
+        d=`date +%d`
+        H=`date +%H`
+        M=`date +%M`
+        S=`date +%S`
+        nomfich=$y"-"$mo"-"$d
+        time=$y" "$mo" "$d" "$H" "$M" "$S
+        datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
+        # making directory tree
+        if [ ! -d /var/www/html/data ]
+        then mkdir /var/www/html/data
+        fi         
+        if [ ! -d /var/www/html/data/$y ]
+        then mkdir /var/www/html/data/$y
+        fi
+        if [ ! -d /var/www/html/data/$y/$mo ]
+        then /bin/mkdir /var/www/html/data/$y/$mo
+        fi
+        if [ ! -d /var/www/html/data/$y/$mo/$d ]
+        then /bin/mkdir /var/www/html/data/$y/$mo/$d
+        fi
+        if [ ! -d /home/sand/backup/$y ]
+        then mkdir /home/sand/backup/$y
+        fi
+        if [ ! -d /home/sand/backup/$y/$mo ]
+        then /bin/mkdir /home/sand/backup/$y/$mo
+        fi
+        if [ ! -d /home/sand/backup/$y/$mo/$d ]
+        then /bin/mkdir /home/sand/backup/$y/$mo/$d
+        fi
+        # setting file names
+        nomfich60deg=$datetime"_60deg_"$a$tinteg".arw"
+        nomfichnadir=$datetime"_nadir_"$a$tinteg".arw"
+        # acquisition de l'image 60deg  
+        echo "Taking 60deg shot"
+        gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
+        # acquisition de l'image nadir
+        echo "Taking nadir shot" 
+        gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
+        # waiting for the images to be saved
+        /bin/sleep 1.0
+        
+
 #         /bin/sleep 8.0         
          # backup images
 
@@ -246,7 +247,9 @@ do time1=`date +%s` # initial time
          rm -f $nomfich60deg
          rm -f $nomfichnadir
          rm -f *.arw
-      done   
+      done
+      let angle=-angle
+      /usr/local/bin/rotate.py $angle 1
    done
    time2=`date +%s`
    let idle=20-$time2+$time1  # one measurement every 20 sec
