@@ -152,13 +152,18 @@ do time1=`date +%s` # initial time
    # reading temperatures in cam assembly and hub
    # and start heater if required
    # camera assembly sensor connected to gpio1 and hub sensor in gpio7
-   do  python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
-     read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
+   echo "" > bidon.tmp
+   ntry=0
+   do  while [ -s bidon.tmp ] || [ $ntry -lt 5 ]
+       do python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
+          let ntry=ntry+1
+       done
+       read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
      # error detection
-     if [ $stateT != "OK" ]
-     then THub=9999
-          TCam=9999
-     fi
+#     if [ $stateT != "OK" ]
+#     then THub=9999
+#          TCam=9999
+#     fi
      echo "THub:" $THub "Tmin:" $TlimHub
      echo "TCam:" $TCam "Tmin:" $TlimCam
      if [ $THub -lt $TlimHub ]
@@ -231,7 +236,7 @@ do time1=`date +%s` # initial time
         echo "Taking nadir shot" 
         gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
         # waiting for the images to be saved
-        /bin/sleep 2.0
+        /bin/sleep 5.0
         
 
 #         /bin/sleep 8.0         
