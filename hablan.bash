@@ -186,13 +186,9 @@ do time1=`date +%s` # initial time
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
          read bidon azim0 bidon < /home/sand/bidon1.tmp
          let 'angle=(a-azim0)*750/360'
-         let 'stend=angle/20'
-         let 'angle=angle-2*stend'
          # goto target azimuth - rotate the camera assembly
          echo "Move to azimuth:" $a
-         /usr/local/bin/rotate.py $stend 2
          /usr/local/bin/rotate.py $angle 1
-         /usr/local/bin/rotate.py $stend 2
          y=`date +%Y`
          mo=`date +%m`
          d=`date +%d`
@@ -236,10 +232,7 @@ do time1=`date +%s` # initial time
          # waiting for the images to be saved
          /bin/sleep 1.0 
          let angle=-angle
-         let stend=-stend
-         /usr/local/bin/rotate.py $stend 2
          /usr/local/bin/rotate.py $angle 1
-         /usr/local/bin/rotate.py $stend 2
 #         /bin/sleep 8.0         
          # backup images
 
