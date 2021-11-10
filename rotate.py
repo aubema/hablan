@@ -46,11 +46,10 @@ def setStep(w1, w2, w3, w4):
   GPIO.output(coil_B_2_pin, w4)
 
 # loop through step sequence based on number of steps
-amp=3
 j=0
 if reverse==0:
     for i in range(0, steps):
-        delay=amp*delaym*(math.cos(2*math.pi*i/steps))+(2*amp+1)*delaym
+        delay=4*delaym*(1-math.sin(math.pi*i/steps))+delaym
         j=j+1
         if j==1:
             setStep(1,0,1,0)
@@ -64,7 +63,7 @@ if reverse==0:
 #    setStep(0,0,0,0)
 else:
     for i in range(0, steps):
-        delay=amp*delaym*(math.cos(2*math.pi*i/steps))+(2*amp+1)*delaym  
+        delay=4*delaym*(1-math.sin(math.pi*i/steps))+delaym    
         j=j+1
         if j==1:
             setStep(1,0,0,1)
