@@ -152,7 +152,7 @@ do time1=`date +%s` # initial time
    # reading temperatures in cam assembly and hub
    # and start heater if required
    # camera assembly sensor connected to gpio1 and hub sensor in gpio7
-   echo "" > bidon.tmp
+   echo "" > /home/sand/bidon.tmp
    ntry=0
    do  while [ -s bidon.tmp ] || [ $ntry -lt 5 ]
        do python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
