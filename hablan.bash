@@ -156,11 +156,16 @@ do time1=`date +%s` # initial time
    
    do  ntry=0
        echo "" > /home/sand/bidon.tmp
-       while [ ! -s bidon.tmp ] && [ $ntry -lt 5 ]
+       while [ ! -s bidon.tmp ]
        do python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
           let ntry=ntry+1
           echo $ntry
           /bin/sleep 0.5
+          if [ $ntry -eq 5 ]
+          then echo "NIL" > /home/sand/bidon.tmp
+               THub=9999
+               TCam=9999
+          fi
        done
        read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
      # error detection
