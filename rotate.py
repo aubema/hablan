@@ -18,7 +18,7 @@ if steps<0:
    steps=-1*steps
    reverse=1
 steps=steps-1
-delaym = float(sys.argv[2]) * 0.0075
+delaym = float(sys.argv[2]) * 0.005
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -46,7 +46,7 @@ def setStep(w1, w2, w3, w4):
   GPIO.output(coil_B_2_pin, w4)
 
 # loop through step sequence based on number of steps
-amp=4
+amp=3
 j=0
 if reverse==0:
     for i in range(0, steps):
