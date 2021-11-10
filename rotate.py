@@ -9,6 +9,7 @@
 import RPi.GPIO as GPIO
 import time
 import sys
+import math
 
 # Variables
 reverse=0
@@ -48,7 +49,7 @@ def setStep(w1, w2, w3, w4):
 j=0
 if reverse==0:
     for i in range(0, steps):
-        delay=10*delaym*(1-sin(pi()*i/step))+delaym
+        delay=10*delaym*(1-math.sin(math.pi*i/step))+delaym
         j=j+1
         if j==1:
             setStep(1,0,1,0)
@@ -62,7 +63,7 @@ if reverse==0:
 #    setStep(0,0,0,0)
 else:
     for i in range(0, steps):
-        delay=10*delaym*(1-sin(pi()*i/step))+delaym    
+        delay=10*delaym*(1-math.sin(math.pi*i/step))+delaym    
         j=j+1
         if j==1:
             setStep(1,0,0,1)
