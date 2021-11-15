@@ -153,21 +153,21 @@ do time1=`date +%s` # initial time
    # and start heater if required
    # camera assembly sensor connected to gpio1 and hub sensor in gpio7
    do ntry=0
+      THub=9999
+      TCam=9999
       >/home/sand/bidon.tmp
       while [ ! -s bidon.tmp ]
       do python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
          let ntry=ntry+1
          echo $ntry
          /bin/sleep 0.5
+         read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
          if [ $ntry -eq 5 ]
          then let THub=9999
               let TCam=9999
               echo "NIL" > /home/sand/bidon.tmp
          fi
       done
-      if [ $THub -ne 9999 ]
-      then read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
-      fi
       # error detection
       echo "THub:" $THub "Tmin:" $TlimHub
       echo "TCam:" $TCam "Tmin:" $TlimCam
@@ -186,6 +186,7 @@ do time1=`date +%s` # initial time
       /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
       read bidon azim0 bidon < /home/sand/bidon1.tmp
       let 'angle=(a-azim0)*750/360'
+      let 'totang=angle'
       # goto target azimuth - rotate the camera assembly
       echo "Move to azimuth:" $a
       /usr/local/bin/rotate.py $angle 1
@@ -232,8 +233,20 @@ do time1=`date +%s` # initial time
          # setting file names
          nomfich60deg=$datetime"_60deg_"$a"_"$tinteg".arw"
          nomfichnadir=$datetime"_nadir_"$a"_"$tinteg".arw"
+
+
+      /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
+      read bidon azim0 bidon < /home/sand/bidon1.tmp
+      let 'angle=(a-azim0)*750/360'
+      let 'totang=totang+angle'
+      # goto target azimuth - rotate the camera assembly
+      echo "Move to azimuth:" $a
+      /usr/local/bin/rotate.py $angle 1         
+         
+         
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
          read bidon azimnow bidon < /home/sand/bidon1.tmp
+         
          # acquisition de l'image 60deg  
          echo "Taking 60deg shot"
          gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
@@ -254,8 +267,8 @@ do time1=`date +%s` # initial time
          rm -f $nomfichnadir
          rm -f *.arw
       done
-      let angle=-angle
-      /usr/local/bin/rotate.py $angle 1
+      let totang=-totang
+      /usr/local/bin/rotate.py $totang 1
    done
    time2=`date +%s`
    let idle=20-$time2+$time1  # one measurement every 20 sec
