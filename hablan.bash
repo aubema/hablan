@@ -56,8 +56,10 @@ globalpos () {
 # activate gps option 0=off 1=on
 gpsf=1
 gpsport="ttyACM0"
-gpioTCam=14
-gpioTHub=15
+gpiorelaycam1=14
+gpiorelaycam2=15
+gpioTCam=23  # value of 1 means on
+gpioDHTpow=24 # value of 1 means on
 TlimCam=25   # minimum temperature in camera assembly
 TlimHub=25   # minimum temperature in the hub
 # number of images to acquire; if 9999 then infinity
@@ -72,6 +74,7 @@ targetshutter=" 35 41 "
 targetazim=" -144 -72 0 72 144 "
 #
 #
+# activate the camera power with the relay gpio 14 and 15
 # wait for the gps startup
 echo "Waiting 15 seconds for the gps & cameras startup"
 /bin/sleep 15
@@ -107,19 +110,19 @@ else portnadir=$port2
      port60deg=$port1
 fi
 # set iso to 6400 for both cameras
-gphoto2 --port $portnadir --set-config iso=20
+gphoto2 --port $portnadir --set-config iso=20 &
 gphoto2 --port $port60deg --set-config iso=20
-gphoto2 --port $portnadir --set-config imagequality=3
+gphoto2 --port $portnadir --set-config imagequality=3 &
 gphoto2 --port $port60deg --set-config imagequality=3
-gphoto2 --port $portnadir --set-config aspectratio=0
+gphoto2 --port $portnadir --set-config aspectratio=0 &
 gphoto2 --port $port60deg --set-config aspectratio=0
-gphoto2 --port $portnadir --set-config capturemode=0
+gphoto2 --port $portnadir --set-config capturemode=0 &
 gphoto2 --port $port60deg --set-config capturemode=0
-gphoto2 --port $portnadir --set-config flashmode=0
+gphoto2 --port $portnadir --set-config flashmode=0 &
 gphoto2 --port $port60deg --set-config flashmode=0
-gphoto2 --port $portnadir --set-config exposurecompensation=0
+gphoto2 --port $portnadir --set-config exposurecompensation=0 &
 gphoto2 --port $port60deg --set-config exposurecompensation=0
-gphoto2 --port $portnadir --set-config whitebalance=1
+gphoto2 --port $portnadir --set-config whitebalance=1 &
 gphoto2 --port $port60deg --set-config whitebalance=1
 #
 # main loop
@@ -152,36 +155,27 @@ do time1=`date +%s` # initial time
    # reading temperatures in cam assembly and hub
    # and start heater if required
    # camera assembly sensor connected to gpio1 and hub sensor in gpio7
-   do ntry=0
-      THub=9999
+   do THub=9999
       TCam=9999
       >/home/sand/bidon.tmp
-      while [ ! -s bidon.tmp ]
-      do python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
-         let ntry=ntry+1
-         echo $ntry
+      python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
+      if [ ! -s bidon.tmp ]
+      then /usr/local/bin/relay.py $gpioDHTpow 0
          /bin/sleep 0.5
+         /usr/local/bin/relay.py $gpioDHTpow 1
+         /bin/sleep 1
+         python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
          read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
-         if [ $ntry -eq 5 ]
-         then let THub=9999
-              let TCam=9999
-              echo "NIL" > /home/sand/bidon.tmp
-         fi
-      done
-      # error detection
+      else
+         read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
+      fi
       echo "THub:" $THub "Tmin:" $TlimHub
       echo "TCam:" $TCam "Tmin:" $TlimCam
-      if [ $THub -lt $TlimHub ]
-      then echo "Hub heating on"
-           /usr/local/bin/relay.py $gpioTHub 0
-      else echo "Hub heating off"
-           /usr/local/bin/relay.py $gpioTHub 1
-      fi
       if [ $TCam -lt $TlimCam ]
       then echo "Cam heating on"
-           /usr/local/bin/relay.py $gpioTCam 0
+           /usr/local/bin/relay.py $gpioTCam 1
       else echo "Cam heating off"
-          /usr/local/bin/relay.py $gpioTCam 1
+          /usr/local/bin/relay.py $gpioTCam 0
       fi
       /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
       read bidon azim0 bidon < /home/sand/bidon1.tmp
@@ -197,7 +191,7 @@ do time1=`date +%s` # initial time
          then tinteg="_t400"
          fi
          # set cameras shutterspeed
-         gphoto2 --port $port60deg --set-config shutterspeed=$tint
+         gphoto2 --port $port60deg --set-config shutterspeed=$tint &
          gphoto2 --port $portnadir --set-config shutterspeed=$tint
          y=`date +%Y`
          mo=`date +%m`
@@ -249,22 +243,34 @@ do time1=`date +%s` # initial time
          
          # acquisition de l'image 60deg  
          echo "Taking 60deg shot"
-         gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg &
+         gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg  &
          # acquisition de l'image nadir
          echo "Taking nadir shot" 
          gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
          # waiting for the images to be saved
          /bin/sleep 8.0
-         # backup images
-         # writing into log file
-         echo $time $lat $lon $alt $azimnow $THub $TCam $nomfich60deg $nomfichnadir >> /var/www/html/data/$y/$mo/$d/$nomfich.log
-         echo $time $lat $lon $alt $azimnow $THub $TCam $nomfich60deg $nomfichnadir >> /home/sand/backup/$y/$mo/$d/$nomfich.log
-         cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
-         cp -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
-         cp -f $nomfichnadir /var/www/html/data/$y/$mo/$d/$nomfichnadir
-         cp -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
-         rm -f $nomfich60deg
-         rm -f $nomfichnadir
+         #
+         # check if the image are downloaded and otherwise off/on on their power adaptors
+         if [ -f $nomfich60deg ] && [ -f $nomfichnadir ]
+         then echo "Images correctly downloaded"
+              # backup images
+              # writing into log file
+              echo $time $lat $lon $alt $azimnow $THub $TCam $nomfich60deg $nomfichnadir >> /var/www/html/data/$y/$mo/$d/$nomfich.log
+              echo $time $lat $lon $alt $azimnow $THub $TCam $nomfich60deg $nomfichnadir >> /home/sand/backup/$y/$mo/$d/$nomfich.log
+              cp -f $nomfich60deg /var/www/html/data/$y/$mo/$d/$nomfich60deg
+              cp -f $nomfich60deg /home/sand/backup/$y/$mo/$d/$nomfich60deg
+              cp -f $nomfichnadir /var/www/html/data/$y/$mo/$d/$nomfichnadir
+              cp -f $nomfichnadir /home/sand/backup/$y/$mo/$d/$nomfichnadir
+              rm -f $nomfich60deg
+              rm -f $nomfichnadir
+         else echo "Reset cameras and reboot..."
+              /usr/local/bin/relay.py $gpiorelaycam1 0
+              /usr/local/bin/relay.py $gpiorelaycam2 0
+              /bin/sleep 1
+              /usr/local/bin/relay.py $gpiorelaycam1 1
+              /usr/local/bin/relay.py $gpiorelaycam2 1
+              /usr/sbin/reboot
+         fi
          rm -f *.arw
       done
       let totang=-totang
