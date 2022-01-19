@@ -56,8 +56,8 @@ globalpos () {
 # activate gps option 0=off 1=on
 gpsf=1
 gpsport="ttyACM0"
-gpiorelaycam1=14
-gpiorelaycam2=15
+gpiorelaycam1=22
+gpiorelaycam2=04
 gpioTCam=23  # value of 1 means on
 gpioDHTpow=24 # value of 1 means on
 TlimCam=25   # minimum temperature in camera assembly
