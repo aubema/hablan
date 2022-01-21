@@ -187,8 +187,8 @@ do time1=`date +%s` # initial time
       for tint in $targetshutter
       do if [ $tint == 35 ]
          then tinteg="_t100"
-         elif [ $tint == 41 ]
-         then tinteg="_t400"
+         elif [ $tint == 45 ]
+         then tinteg="_t1000"
          fi
          # set cameras shutterspeed
          gphoto2 --port $port60deg --set-config shutterspeed=$tint &
