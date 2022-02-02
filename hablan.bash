@@ -56,9 +56,9 @@ globalpos () {
 # activate gps option 0=off 1=on
 gpsf=1
 gpsport="ttyACM0"
-gpiorelaycam1=22
-gpiorelaycam2=04
-gpioTCam=23  # value of 1 means on
+gpiorelaycam=22
+gpioTCam2=04
+gpioTCam1=23  # value of 1 means on
 gpioDHTpow=24 # value of 1 means on
 TlimCam=25   # minimum temperature in camera assembly
 TlimHub=25   # minimum temperature in the hub
@@ -173,9 +173,11 @@ do time1=`date +%s` # initial time
       echo "TCam:" $TCam "Tmin:" $TlimCam
       if [ $TCam -lt $TlimCam ]
       then echo "Cam heating on"
-           /usr/local/bin/relay.py $gpioTCam 1
+           /usr/local/bin/relay.py $gpioTCam1 1
+           /usr/local/bin/relay.py $gpioTCam2 1
       else echo "Cam heating off"
-          /usr/local/bin/relay.py $gpioTCam 0
+          /usr/local/bin/relay.py $gpioTCam1 0
+          /usr/local/bin/relay.py $gpioTCam2 0
       fi
       /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
       read bidon azim0 bidon < /home/sand/bidon1.tmp
@@ -235,7 +237,8 @@ do time1=`date +%s` # initial time
       let 'totang=totang+angle'
       # goto target azimuth - rotate the camera assembly
       echo "Move to azimuth:" $a
-      /usr/local/bin/rotate.py $angle 1         
+      /usr/local/bin/rotate.py $angle 1
+           
          
          
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
@@ -264,11 +267,9 @@ do time1=`date +%s` # initial time
               rm -f $nomfich60deg
               rm -f $nomfichnadir
          else echo "Reset cameras and reboot..."
-              /usr/local/bin/relay.py $gpiorelaycam1 0
-              /usr/local/bin/relay.py $gpiorelaycam2 0
+              /usr/local/bin/relay.py $gpiorelaycam 0
               /bin/sleep 1
-              /usr/local/bin/relay.py $gpiorelaycam1 1
-              /usr/local/bin/relay.py $gpiorelaycam2 1
+              /usr/local/bin/relay.py $gpiorelaycam 1
               /usr/sbin/reboot
          fi
          rm -f *.arw
