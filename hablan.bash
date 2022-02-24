@@ -65,7 +65,7 @@ TlimHub=25   # minimum temperature in the hub
 # number of images to acquire; if 9999 then infinity
 nobs=9999
 serialnadir="00000000000000003282741003379044"  # nadir view camera serial number
-targetshutter=" 32 51 "
+targetshutter=" 32 45 "
 # Choices: 0 30; 1 25; 2 20; 3 15; 4 13; 5 10; 6 8; 7 6; 8 5; 9 4; 10 32/10; 11 25/10; 12 2; 13 16/10
 # 14 13/10; 15 1; 16 8/10; 17 6/10; 18 5/10; 19 4/10; 20 1/3; 21 1/4; 22 1/5; 23 1/6; 24 1/8; 25 1/10
 # 26 1/13; 27 1/15; 28 1/20; 29 1/25; 30 1/30; 31 1/40; 32 1/50; 33 1/60; 34 1/80; 35 1/100; 36 1/125
@@ -190,7 +190,7 @@ do time1=`date +%s` # initial time
       do if [ $tint == 32 ]
          then tinteg="_t50"
          elif [ $tint == 51 ]
-         then tinteg="_t4000"
+         then tinteg="_t1000"
          fi
          # set cameras shutterspeed
          gphoto2 --port $port60deg --set-config shutterspeed=$tint &
