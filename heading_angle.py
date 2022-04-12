@@ -66,7 +66,7 @@ if(heading_angle > 360):
     heading_angle = heading_angle - 360
 
     #check for sign
-if(heading < 0):
+if(heading_angle < 0):
     heading_angle = heading_angle + 360
 #print x, y, z
 print "azimuth= ", heading_angle 
