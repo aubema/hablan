@@ -18,7 +18,10 @@ if steps<0:
    steps=-1*steps
    reverse=1
 if steps!=0:
-   delaym = float(sys.argv[2]) * 0.007*(375/steps)**0.5
+   speetfact=1
+   if steps<375:
+      speedfact = (375/steps)**0.5
+   delaym = float(sys.argv[2]) * 0.007*speedfact
 
    GPIO.setmode(GPIO.BCM)
    GPIO.setwarnings(False)
