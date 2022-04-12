@@ -62,11 +62,11 @@ heading = math.atan2(y, x)
 heading_angle = int(heading * 180/pi + declination)
 
 #Due to declination check for >360 degree
-if(heading > 360):
-    heading = heading - 360
+if(heading_angle > 360):
+    heading_angle = heading_angle - 360
 
     #check for sign
 if(heading < 0):
-    heading = heading + 360
+    heading_angle = heading_angle + 360
 #print x, y, z
 print "azimuth= ", heading_angle 
