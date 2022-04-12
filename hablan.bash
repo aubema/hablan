@@ -236,12 +236,13 @@ do time1=`date +%s` # initial time
          do /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
             read bidon azim0 bidon < /home/sand/bidon1.tmp
             echo "Heading = " $azim0 " deg"
-            let deltaa=(a-azim0)/2
+            let deltaa=(a-azim0)
             if [ $deltaa -gt 180 ] 
             then let deltaa=360-deltaa
             elif [ $deltaa -lt -180 ]
             then let deltaa=360+deltaa
             fi
+            let deltaa=deltaa/2
             let nrot=nrot+1
             let 'angle=deltaa*750/360'
             let 'totang=totang+angle'
