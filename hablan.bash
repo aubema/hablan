@@ -245,7 +245,7 @@ do time1=`date +%s` # initial time
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
          read bidon azim0 bidon < /home/sand/bidon1.tmp
          echo "heading = " $azim0 " deg"
-         exit 0
+
          let 'angle=(a-azim0)*750/360'
          let 'totang=totang+angle'
          # goto second guess angle - rotate the camera assembly
