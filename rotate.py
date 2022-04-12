@@ -12,13 +12,13 @@ import sys
 import math
 
 # Variables
+speedfact=1
 reverse=0
 steps = int(sys.argv[1])
 if steps<0:
    steps=-1*steps
    reverse=1
 if steps!=0:
-   speetfact=1
    if steps<375:
       speedfact = (375/steps)**0.5
    delaym = float(sys.argv[2]) * 0.007*speedfact
