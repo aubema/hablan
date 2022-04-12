@@ -231,12 +231,12 @@ do time1=`date +%s` # initial time
          nomfich60deg=$datetime"_60deg_"$a"_"$tinteg".arw"
          nomfichnadir=$datetime"_nadir_"$a"_"$tinteg".arw"
          nrot=0
-         while [ $nrot -lt 5 ]
+         while [ $nrot -lt 10 ]
          # determine rotation angle for first guess rotation angle
          do /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
             read bidon azim0 bidon < /home/sand/bidon1.tmp
             echo "Heading = " $azim0 " deg"
-            let deltaa=a-azim0
+            let deltaa=(a-azim0)/2
             if [ $deltaa -gt 180 ] 
             then let deltaa=360-deltaa
             elif [ $deltaa -lt -180 ]
