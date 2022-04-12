@@ -128,7 +128,6 @@ gphoto2 --port $port60deg --set-config whitebalance=1
 # main loop
 #
 i=0
-totang=0
 while [ $i -lt $nobs ]
 do time1=`date +%s` # initial time
    rm -f capt*.arw
@@ -156,7 +155,8 @@ do time1=`date +%s` # initial time
    # reading temperatures in cam assembly and hub
    # and start heater if required
    # camera assembly sensor connected to gpio1 and hub sensor in gpio7
-   do THub=9999
+   do totang=0
+      THub=9999
       TCam=9999
       >/home/sand/bidon.tmp
       python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
