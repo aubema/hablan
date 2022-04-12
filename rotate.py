@@ -17,7 +17,6 @@ steps = int(sys.argv[1])
 if steps<0:
    steps=-1*steps
    reverse=1
-steps=steps+2
 if steps!=0:
    delaym = float(sys.argv[2]) * 0.007*(375/steps)**0.5
 
