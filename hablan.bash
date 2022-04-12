@@ -60,8 +60,8 @@ gpiorelaycam=22
 gpioTCam2=04
 gpioTCam1=23  # value of 1 means on
 gpioDHTpow=24 # value of 1 means on
-TlimCam=25   # minimum temperature in camera assembly
-TlimHub=25   # minimum temperature in the hub
+TlimCam=12   # minimum temperature in camera assembly
+TlimHub=12   # minimum temperature in the hub
 # number of images to acquire; if 9999 then infinity
 nobs=9999
 serialnadir="00000000000000003282741003379044"  # nadir view camera serial number
@@ -230,39 +230,20 @@ do time1=`date +%s` # initial time
          # setting file names
          nomfich60deg=$datetime"_60deg_"$a"_"$tinteg".arw"
          nomfichnadir=$datetime"_nadir_"$a"_"$tinteg".arw"
-
+         nrot=0
+         while [ nrot lt 5 ]
          # determine rotation angle for first guess rotation angle
-         /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-         read bidon azim0 bidon < /home/sand/bidon1.tmp
-         echo "Initial heading = " $azim0 " deg"
-         let 'angle=(a-azim0)*750/360'
-         let 'totang=totang+angle'
-         # goto first guess angle - rotate the camera assembly
-         echo "Move to azimuth (1st guess):" $a  "with " $angle
-         /usr/local/bin/rotate.py $angle 1
-         
-         /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-         read bidon azim0 bidon < /home/sand/bidon1.tmp
-         echo "First guess heading = " $azim0 " deg"         
-         # refresh to the actual value of heading angle and make
-         # determine rotation angle for second guess rotation angle           
-         let 'angle=(a-azim0)*750/360'
-         let 'totang=totang+angle'
-         # goto second guess angle - rotate the camera assembly
-         echo "Move to azimuth (2nd guess):" $a "with " $angle
-         /usr/local/bin/rotate.py $angle 1         
-         
-         /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-         read bidon azim0 bidon < /home/sand/bidon1.tmp
-         echo "First guess heading = " $azim0 " deg"         
-         # refresh to the actual value of heading angle and make
-         # determine rotation angle for second guess rotation angle           
-         let 'angle=(a-azim0)*750/360'
-         let 'totang=totang+angle'
-         # goto second guess angle - rotate the camera assembly
-         echo "Move to azimuth (3rd guess):" $a "with " $angle
-         /usr/local/bin/rotate.py $angle 1
-         
+         do /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
+            read bidon azim0 bidon < /home/sand/bidon1.tmp
+            let nrot=nrot+1
+            echo "Initial heading = " $azim0 " deg"
+            let 'angle=(a-azim0)*750/360'
+            let 'totang=totang+angle'
+            # goto first guess angle - rotate the camera assembly
+            echo "Move to azimuth (guess #"$nrot"):" $a  "with " $angle
+            /usr/local/bin/rotate.py $angle 1
+         done
+       
                   
          # refresh to the actual value of heading angle where pictures are acquired
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
