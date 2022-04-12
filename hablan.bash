@@ -128,6 +128,7 @@ gphoto2 --port $port60deg --set-config whitebalance=1
 # main loop
 #
 i=0
+totang=0
 while [ $i -lt $nobs ]
 do time1=`date +%s` # initial time
    rm -f capt*.arw
@@ -179,13 +180,13 @@ do time1=`date +%s` # initial time
           /usr/local/bin/relay.py $gpioTCam1 0
           /usr/local/bin/relay.py $gpioTCam2 0
       fi
-      /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-      read bidon azim0 bidon < /home/sand/bidon1.tmp
-      let 'angle=(a-azim0)*750/360'
-      let 'totang=angle'
-      # goto target azimuth - rotate the camera assembly
-      echo "Move to azimuth:" $a
-      /usr/local/bin/rotate.py $angle 1
+#      /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
+#      read bidon azim0 bidon < /home/sand/bidon1.tmp
+#      let 'angle=(a-azim0)*750/360'
+#      let 'totang=angle'
+#      # goto target azimuth - rotate the camera assembly
+#      echo "Move to azimuth:" $a
+#      /usr/local/bin/rotate.py $angle 1
       for tint in $targetshutter
       do if [ $tint == 32 ]
          then tinteg="_t50"
@@ -230,17 +231,26 @@ do time1=`date +%s` # initial time
          nomfich60deg=$datetime"_60deg_"$a"_"$tinteg".arw"
          nomfichnadir=$datetime"_nadir_"$a"_"$tinteg".arw"
 
-
-      /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-      read bidon azim0 bidon < /home/sand/bidon1.tmp
-      let 'angle=(a-azim0)*750/360'
-      let 'totang=totang+angle'
-      # goto target azimuth - rotate the camera assembly
-      echo "Move to azimuth:" $a
-      /usr/local/bin/rotate.py $angle 1
-           
+         # determine rotation angle for first guess rotation angle
+         /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
+         read bidon azim0 bidon < /home/sand/bidon1.tmp
+         let 'angle=(a-azim0)*750/360'
+         let 'totang=totang+angle'
+         # goto first guess angle - rotate the camera assembly
+         echo "Move to azimuth (1st guess):" $a
+         /usr/local/bin/rotate.py $angle 1
+         # refresh to the actual value of heading angle and make
+         # determine rotation angle for second guess rotation angle           
+         /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
+         read bidon azim0 bidon < /home/sand/bidon1.tmp
+         let 'angle=(a-azim0)*750/360'
+         let 'totang=totang+angle'
+         # goto second guess angle - rotate the camera assembly
+         echo "Move to azimuth (2nd guess):" $a
+         /usr/local/bin/rotate.py $angle 1         
          
          
+         # refresh to the actual value of heading angle where pictures are acquired
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
          read bidon azimnow bidon < /home/sand/bidon1.tmp
          
@@ -274,6 +284,7 @@ do time1=`date +%s` # initial time
          fi
          rm -f *.arw
       done
+      # go back to zero angle relative to the control box framework
       let totang=-totang
       /usr/local/bin/rotate.py $totang 1
    done
