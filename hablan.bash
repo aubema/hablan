@@ -240,20 +240,30 @@ do time1=`date +%s` # initial time
          # goto first guess angle - rotate the camera assembly
          echo "Move to azimuth (1st guess):" $a  "with " $angle
          /usr/local/bin/rotate.py $angle 1
+         
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
          read bidon azim0 bidon < /home/sand/bidon1.tmp
          echo "First guess heading = " $azim0 " deg"         
          # refresh to the actual value of heading angle and make
          # determine rotation angle for second guess rotation angle           
-
-
          let 'angle=(a-azim0)*750/360'
          let 'totang=totang+angle'
          # goto second guess angle - rotate the camera assembly
          echo "Move to azimuth (2nd guess):" $a "with " $angle
          /usr/local/bin/rotate.py $angle 1         
          
+         /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
+         read bidon azim0 bidon < /home/sand/bidon1.tmp
+         echo "First guess heading = " $azim0 " deg"         
+         # refresh to the actual value of heading angle and make
+         # determine rotation angle for second guess rotation angle           
+         let 'angle=(a-azim0)*750/360'
+         let 'totang=totang+angle'
+         # goto second guess angle - rotate the camera assembly
+         echo "Move to azimuth (3rd guess):" $a "with " $angle
+         /usr/local/bin/rotate.py $angle 1
          
+                  
          # refresh to the actual value of heading angle where pictures are acquired
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
          read bidon azimnow bidon < /home/sand/bidon1.tmp
