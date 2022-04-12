@@ -237,7 +237,7 @@ do time1=`date +%s` # initial time
          let 'angle=(a-azim0)*750/360'
          let 'totang=totang+angle'
          # goto first guess angle - rotate the camera assembly
-         echo "Move to azimuth (1st guess):" $a
+         echo "Move to azimuth (1st guess):" $a  "with " $angle
          /usr/local/bin/rotate.py $angle 1
          # refresh to the actual value of heading angle and make
          # determine rotation angle for second guess rotation angle           
@@ -246,7 +246,7 @@ do time1=`date +%s` # initial time
          let 'angle=(a-azim0)*750/360'
          let 'totang=totang+angle'
          # goto second guess angle - rotate the camera assembly
-         echo "Move to azimuth (2nd guess):" $a
+         echo "Move to azimuth (2nd guess):" $a "with " $angle
          /usr/local/bin/rotate.py $angle 1         
          
          
