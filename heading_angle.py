@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # HMC5883L magnetometer heading angle calculation
-# note: true_heading=sensor_heading+magnetic_declination_angle
-# for Timmins 10.4 deg (west) c.f. geomag.nrcan.gc.ca/calc/mdcal-r-en.php
+# note: geographical azimuth=sensor_heading+magnetic_declination_angle
+# for Timmins -10.15 deg (west) c.f. https://www.magnetic-declination.com/
 import smbus		#import SMBus module of I2C
 from time import sleep  #import sleep
 import math
@@ -14,7 +14,7 @@ Register_mode  = 0x02           #Address of mode register
 X_axis_H    = 0x03              #Address of X-axis MSB data register
 Z_axis_H    = 0x05              #Address of Z-axis MSB data register
 Y_axis_H    = 0x07              #Address of Y-axis MSB data register
-declination = 10.4              #define declination angle of location where measurement going to be done in degrees
+declination = -10.15            #define declination angle of location where measurement going to be done in degrees
 pi          = 3.14159265359     #define pi value
 
 
@@ -58,6 +58,9 @@ y = read_raw_data(Y_axis_H)
 
 heading = math.atan2(y, x)
         
+#convert into angle
+heading_angle = int(heading * 180/pi + declination)
+
 #Due to declination check for >360 degree
 if(heading > 2*pi):
     heading = heading - 2*pi
@@ -65,8 +68,5 @@ if(heading > 2*pi):
     #check for sign
 if(heading < 0):
     heading = heading + 2*pi
-
-#convert into angle
-heading_angle = int(heading * 180/pi + declination)
 #print x, y, z
-print "Heading_Angle= ", heading_angle 
+print "azimuth= ", heading_angle 
