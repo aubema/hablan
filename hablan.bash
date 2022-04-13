@@ -231,6 +231,7 @@ do time1=`date +%s` # initial time
          nomfich60deg=$datetime"_60deg_"$a"_"$tinteg".arw"
          nomfichnadir=$datetime"_nadir_"$a"_"$tinteg".arw"
          nrot=0
+         deltaa=10
          while [ ${deltaa/#-} -ge 4 ]
          # determine rotation angle for first guess rotation angle
          do /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
