@@ -231,26 +231,24 @@ do time1=`date +%s` # initial time
          nomfich60deg=$datetime"_60deg_"$a"_"$tinteg".arw"
          nomfichnadir=$datetime"_nadir_"$a"_"$tinteg".arw"
          nrot=0
-         while [ $nrot -lt 10 ]
+         while [ "${deltaa/#-}" -ge 4 ]
          # determine rotation angle for first guess rotation angle
          do /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
             read bidon azim0 bidon < /home/sand/bidon1.tmp
             echo "Heading = " $azim0 " deg"
             let deltaa=(a-azim0)
-            if [ "${deltaa/#-}" -ge 3 ]
-            then if [ $deltaa -gt 180 ] 
-                 then let deltaa=360-deltaa
-                 elif [ $deltaa -lt -180 ]
-                 then let deltaa=360+deltaa
-                 fi
-                 let deltaa=deltaa-deltaa/2
-                 let nrot=nrot+1
-                 let 'angle=deltaa*750/360'
-                 let 'totang=totang+angle'
-                 # goto first guess angle - rotate the camera assembly
-                 echo "Move to azimuth (guess #"$nrot"):" $a  "with " $angle
-                 /usr/local/bin/rotate.py $angle 1
-             fi
+            if [ $deltaa -gt 180 ] 
+            then let deltaa=360-deltaa
+            elif [ $deltaa -lt -180 ]
+            then let deltaa=360+deltaa
+            fi
+            let deltaa=deltaa-deltaa/2
+            let nrot=nrot+1
+            let 'angle=deltaa*750/360'
+            let 'totang=totang+angle'
+            # goto first guess angle - rotate the camera assembly
+            echo "Move to azimuth (guess #"$nrot"):" $a  "with " $angle
+            /usr/local/bin/rotate.py $angle 1
          done
        
                   
