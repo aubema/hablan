@@ -11,6 +11,7 @@ half = 375
 delay = 0.0075
 full=2*half
 destination=0
+delaym=0.007
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -43,6 +44,7 @@ def setStep(w1, w2, w3, w4):
 # move forward half turn until sensor activated
 j=0
 for i in range(0, half):
+    delay=(3*half/375)*delaym*(1-math.sin(math.pi*i/half))+delaym
     # stop when encoder found
     code=GPIO.input(sensor_gpio)
     if GPIO.input(sensor_gpio)==0:
@@ -63,6 +65,7 @@ time.sleep(0.5)
 if destination==0:
     j=0
     for i in range(0, full):
+        delay=(3*full/375)*delaym*(1-math.sin(math.pi*i/full))+delaym
         # stop when encoder found
         if GPIO.input(sensor_gpio)==0:
             destination=1
