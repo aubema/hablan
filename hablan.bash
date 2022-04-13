@@ -243,7 +243,7 @@ do time1=`date +%s` # initial time
             elif [ $deltaa -lt -180 ]
             then let deltaa=360+deltaa
             fi
-            let deltaa=deltaa*2/3
+            let deltaa=deltaa
             let nrot=nrot+1
             let 'angle=deltaa*750/360'
             let 'totang=totang+angle'
