@@ -239,13 +239,12 @@ do time1=`date +%s` # initial time
             echo "Heading = " $azim0 " deg"
             let deltaa=(a-azim0)
             if [ $deltaa -gt 180 ] 
-            then let deltaa=360-deltaa
+            then let deltaa=deltaa-360
             elif [ $deltaa -lt -180 ]
             then let deltaa=360+deltaa
             fi
-            let deltaa=deltaa
             let nrot=nrot+1
-            if [ $nrot -eq 10 ] && [ ${deltaa/#-} -gt 6 ]
+            if [ $nrot -eq 6 ] && [ ${deltaa/#-} -gt 20 ]
             then let angle=72  # to get rid of a strange histerisis loop
             else
                  let 'angle=deltaa*750/360'            
