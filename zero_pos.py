@@ -5,6 +5,7 @@
 import RPi.GPIO as GPIO
 import time
 import sys
+import math
 
 # Variables steps is half a turn
 half = 375
