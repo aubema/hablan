@@ -245,6 +245,9 @@ do time1=`date +%s` # initial time
             fi
             let deltaa=deltaa
             let nrot=nrot+1
+            if [ $nrot -eq 10 ]
+            then let angle=72
+            fi
             let 'angle=deltaa*750/360'
             let 'totang=totang+angle'
             # goto first guess angle - rotate the camera assembly
