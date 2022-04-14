@@ -51,16 +51,17 @@ for i in range(0, half):
     if GPIO.input(sensor_gpio)==0:
         destination=1
         break
-    j=j+1
-    if j==1:
-        setStep(1,0,1,0)
-    if j==2:
-        setStep(0,1,1,0)
-    if j==3:
-        setStep(0,1,0,1)
-    if j==4:
-        setStep(1,0,0,1)
-        j=0
+        j=j+1
+        if j==1:
+            setStep(1,0,0,1)
+        if j==2:
+            setStep(0,1,0,1)
+        if j==3:
+            setStep(0,1,1,0)
+        if j==4:
+            setStep(1,0,1,0)
+            j=0
+
 # move reverse direction complete turn until sensor activated  
 time.sleep(0.5)   		
 if destination==0:
@@ -73,12 +74,12 @@ if destination==0:
             break
         j=j+1
         if j==1:
-            setStep(1,0,0,1)
-        if j==2:
-            setStep(0,1,0,1)
-        if j==3:
-            setStep(0,1,1,0)
-        if j==4:
             setStep(1,0,1,0)
+        if j==2:
+            setStep(0,1,1,0)
+        if j==3:
+        setStep(0,1,0,1)
+        if j==4:
+            setStep(1,0,0,1)
             j=0
 # setStep(0,0,0,0)
