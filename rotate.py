@@ -22,7 +22,7 @@ if steps!=0:
    delay = 0.007 * (375 / steps)**0.5
    if steps>375:
       delay=0.007
-   steps=steps+2  
+   steps=steps+1  
    delaym = float(sys.argv[2]) * delay
 
    GPIO.setmode(GPIO.BCM)
