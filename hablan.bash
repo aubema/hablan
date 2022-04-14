@@ -225,7 +225,7 @@ do time1=`date +%s` # initial time
          nomfichnadir=$datetime"_nadir_"$a"_"$tinteg".arw"
          nrot=0
          deltaa=10
-         while [ ${deltaa/#-} -ge 1  ] && [ $nrot -lt 20 ]
+         while [ ${deltaa/#-} -ge 2  ] && [ $nrot -lt 20 ]
          # determine rotation angle for first guess rotation angle
          do /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
             read bidon azim0 bidon < /home/sand/bidon1.tmp
