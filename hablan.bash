@@ -238,7 +238,7 @@ do time1=`date +%s` # initial time
             fi
             let nrot=nrot+1
             let 'angle=deltaa*750/360'
-            let angle=deltaa            
+            let angle=deltaa*3/2            
             let 'totang=totang+angle'
             # goto first guess angle - rotate the camera assembly
             echo "Move to azimuth (guess #"$nrot"):" $a  "with " $angle
