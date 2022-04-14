@@ -22,7 +22,7 @@
 # Calibrate heading sensor
 #
 i=0
-delta=30  # correspond to 12 deg steps
+delta=75  # correspond to 36 deg steps
 y=`date +%Y`
 mo=`date +%m`
 d=`date +%d`
@@ -52,7 +52,7 @@ if [ ! -d /home/sand/backup/$y/$mo/$d ]
 then /bin/mkdir /home/sand/backup/$y/$mo/$d
 fi
 datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
-while [ $i -lt 750 ]
+while [ $i -le 750 ]
 do let angle=i*360/750
    /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
    read bidon azim bidon < /home/sand/bidon1.tmp
