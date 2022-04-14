@@ -180,13 +180,6 @@ do time1=`date +%s` # initial time
           /usr/local/bin/relay.py $gpioTCam1 0
           /usr/local/bin/relay.py $gpioTCam2 0
       fi
-#      /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-#      read bidon azim0 bidon < /home/sand/bidon1.tmp
-#      let 'angle=(a-azim0)*750/360'
-#      let 'totang=angle'
-#      # goto target azimuth - rotate the camera assembly
-#      echo "Move to azimuth:" $a
-#      /usr/local/bin/rotate.py $angle 1
       for tint in $targetshutter
       do if [ $tint == 32 ]
          then tinteg="_t50"
@@ -244,12 +237,7 @@ do time1=`date +%s` # initial time
             then let deltaa=360+deltaa
             fi
             let nrot=nrot+1
-            if [ $nrot -eq 6 ] && [ ${deltaa/#-} -gt 20 ]
-            then let angle=72  # to get rid of a strange histerisis loop
-            else
-                 let 'angle=deltaa*750/360'            
-            fi
-
+            let 'angle=deltaa*750/360'            
             let 'totang=totang+angle'
             # goto first guess angle - rotate the camera assembly
             echo "Move to azimuth (guess #"$nrot"):" $a  "with " $angle
