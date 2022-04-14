@@ -223,27 +223,33 @@ do time1=`date +%s` # initial time
          # setting file names
          nomfich60deg=$datetime"_60deg_"$a"_"$tinteg".arw"
          nomfichnadir=$datetime"_nadir_"$a"_"$tinteg".arw"
-         nrot=0
-         deltaa=10
-         while [ ${deltaa/#-} -ge 2  ] && [ $nrot -lt 20 ]
-         # determine rotation angle for first guess rotation angle
-         do /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-            read bidon azim0 bidon < /home/sand/bidon1.tmp
-            echo "Heading = " $azim0 " deg"
-            let deltaa=(a-azim0)
-            if [ $deltaa -gt 180 ] 
-            then let deltaa=deltaa-360
-            elif [ $deltaa -lt -180 ]
-            then let deltaa=360+deltaa
-            fi
-            let nrot=nrot+1
-            let 'angle=deltaa*744/360'    
-            let 'totang=totang+angle'
-            # goto first guess angle - rotate the camera assembly
-            echo "Move to azimuth (guess #"$nrot"):" $a  "with " $angle
-            /usr/local/bin/rotate.py $angle 1
-         done
-       
+#         nrot=0
+#         deltaa=10
+#         while [ ${deltaa/#-} -ge 2  ] && [ $nrot -lt 5 ]
+#         # determine rotation angle for first guess rotation angle
+#         do /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
+#            read bidon azim0 bidon < /home/sand/bidon1.tmp
+#            echo "Heading = " $azim0 " deg"
+#            let deltaa=(a-azim0)
+#            if [ $deltaa -gt 180 ] 
+#            then let deltaa=deltaa-360
+#            elif [ $deltaa -lt -180 ]
+#            then let deltaa=360+deltaa
+#            fi
+#            let nrot=nrot+1
+#            let 'angle=deltaa*750/360'  # convert delta_angle into delta_stepper  
+#            let 'totang=totang+angle'
+#            # goto first guess angle - rotate the camera assembly
+#            echo "Move to azimuth (guess #"$nrot"):" $a  "with " $angle
+#            /usr/local/bin/rotate.py $angle 1
+#         done
+
+
+#****ceci est ajoute en lien avec le fait de retirer l'ajustement avec le heading
+         let angle=a*750/360
+         /usr/local/bin/rotate.py $angle 1
+
+#****        
                   
          # refresh to the actual value of heading angle where pictures are acquired
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
@@ -279,6 +285,13 @@ do time1=`date +%s` # initial time
               /usr/sbin/reboot
          fi
          rm -f *.arw
+         
+#****ceci est ajoute en lien avec le fait de retirer l'ajustement avec le heading         
+         let angle=-angle
+         /usr/local/bin/rotate.py $angle 1 
+         /usr/local/bin/zero_pos.py                 
+#****         
+         
       done
       # go back to zero angle relative to the control box framework
       let totang=-totang
