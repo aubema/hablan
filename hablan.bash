@@ -72,6 +72,13 @@ targetshutter=" 32 48 "
 # 37 1/160; 38 1/200; 39 1/250; 40 1/320; 41 1/400; 42 1/500; 43 1/640; 44 1/800; 45 1/1000; 46 1/1250
 # 47 1/1600; 48 1/2000; 49 1/2500; 50 1/3200; 51 1/4000; 52 Bulb
 targetazim=" 0 72 144 216 288 "
+
+
+#****ceci est ajoute en lien avec le fait de retirer l'ajustement avec le heading
+targetazim=" -144 -72 0 72 144 "
+#****
+
+
 #
 #
 # activate the camera power with the relay gpio 14 and 15
