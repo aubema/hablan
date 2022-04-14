@@ -22,7 +22,7 @@
 # Calibrate heading sensor
 #
 i=0
-delta=15  # correspond to 6 deg steps
+delta=30  # correspond to 12 deg steps
 y=`date +%Y`
 mo=`date +%m`
 d=`date +%d`
