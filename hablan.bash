@@ -255,7 +255,7 @@ do time1=`date +%s` # initial time
 #****ceci est ajoute en lien avec le fait de retirer l'ajustement avec le heading
          let angle=a*750/360
          /usr/local/bin/rotate.py $angle 1
-
+         echo "Move to azimuth:" $a  "with " $angle
 #****        
                   
          # refresh to the actual value of heading angle where pictures are acquired
