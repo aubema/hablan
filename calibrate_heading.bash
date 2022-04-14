@@ -62,6 +62,7 @@ do let angle=i*360/750
         echo $angle $azim >> /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
    fi
    /usr/local/bin/rotate.py $delta 1
+   /bin/sleep 0.5
    let i=i+delta
 done
 cp -f /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt" /home/sand/backup/$y/$mo/$d/$datetime"_heading_calib.txt"
