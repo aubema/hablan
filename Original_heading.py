@@ -1,7 +1,3 @@
-''
-    Find Heading by using HMC5883L interface with Raspberry Pi using Python
-	http://www.electronicwings.com
-'''
 import smbus		#import SMBus module of I2C
 from time import sleep  #import sleep
 import math
