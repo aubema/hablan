@@ -69,4 +69,4 @@ if(heading_angle > 360):
 if(heading_angle < 0):
     heading_angle = heading_angle + 360
 #print x, y, z
-print "azimuth= ", heading_angle 
+print "azimuth= ", heading_angle , x, y
