@@ -55,11 +55,11 @@ datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
 while [ $i -le 750 ]
 do let angle=i*360/750
    /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-   read bidon azim x y bidon < /home/sand/bidon1.tmp
+   read bidon azim xx yy bidon < /home/sand/bidon1.tmp
    if [ $i -eq 0 ]
-   then echo $angle $x $y $azim > /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
+   then echo $angle $xx $yy $azim > /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
    else
-        echo $angle $x $y $azim >> /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
+        echo $angle $xx $yy $azim >> /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
    fi
    /usr/local/bin/rotate.py $delta 1
    /bin/sleep 2
