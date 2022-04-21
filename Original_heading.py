@@ -69,6 +69,6 @@ while True:
         #convert into angle
         heading_angle = int(heading * 180/pi)
 
-        print ("Heading Angle = %d°" %heading_angle %x %y %z)
+        print ("Heading Angle = %d°" %heading_angle , x , y , z)
         sleep(1)
 
