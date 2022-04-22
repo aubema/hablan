@@ -158,12 +158,12 @@ do time1=`date +%s` # initial time
    # goto zero position
    /usr/local/bin/zero_pos.py   
    # loop over angles in degrees (5 values to fill half of a sphere)
+   totang=0
    for a in $targetazim
    # reading temperatures in cam assembly and hub
    # and start heater if required
    # camera assembly sensor connected to gpio1 and hub sensor in gpio7
-   do totang=0
-      THub=9999
+   do THub=9999
       TCam=9999
       >/home/sand/bidon.tmp
       python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
@@ -187,6 +187,12 @@ do time1=`date +%s` # initial time
           /usr/local/bin/relay.py $gpioTCam1 0
           /usr/local/bin/relay.py $gpioTCam2 0
       fi
+#****ceci est ajoute en lien avec le fait de retirer l'ajustement avec le heading
+      let angle=(a-totang)*750/360
+      /usr/local/bin/rotate.py $angle 1
+      let 'totang=totang+angle'
+      echo "Move to azimuth:" $a  "with " $angle
+#****        
       for tint in $targetshutter
       do if [ $tint == 32 ]
          then tinteg="_t50"
@@ -252,11 +258,7 @@ do time1=`date +%s` # initial time
 #         done
 
 
-#****ceci est ajoute en lien avec le fait de retirer l'ajustement avec le heading
-         let angle=a*750/360
-         /usr/local/bin/rotate.py $angle 1
-         echo "Move to azimuth:" $a  "with " $angle
-#****        
+
                   
          # refresh to the actual value of heading angle where pictures are acquired
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
@@ -293,17 +295,14 @@ do time1=`date +%s` # initial time
          fi
          rm -f *.arw
          
-#****ceci est ajoute en lien avec le fait de retirer l'ajustement avec le heading         
-         let angle=-angle
-         /usr/local/bin/rotate.py $angle 1 
-         /usr/local/bin/zero_pos.py                 
-#****         
+
          
       done
-      # go back to zero angle relative to the control box framework
-      let totang=-totang
-      /usr/local/bin/rotate.py $totang 1
+
    done
+   # go back to zero angle relative to the control box framework
+   let totang=-totang
+   /usr/local/bin/rotate.py $totang 1
    time2=`date +%s`
    let idle=20-$time2+$time1  # one measurement every 20 sec
    echo $idle $time1 $time2
