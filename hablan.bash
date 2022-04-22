@@ -156,53 +156,51 @@ do time1=`date +%s` # initial time
    fi
    echo "Move to zero position" $a
    # goto zero position
-   /usr/local/bin/zero_pos.py   
-   # loop over angles in degrees (5 values to fill half of a sphere)
-   totang=0
-   for a in $targetazim
-   # reading temperatures in cam assembly and hub
-   # and start heater if required
-   # camera assembly sensor connected to gpio1 and hub sensor in gpio7
-   do THub=9999
-      TCam=9999
-      >/home/sand/bidon.tmp
-      python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
-      if [ ! -s bidon.tmp ]
-      then /usr/local/bin/relay.py $gpioDHTpow 0
-         /bin/sleep 0.5
-         /usr/local/bin/relay.py $gpioDHTpow 1
-         /bin/sleep 1
+   /usr/local/bin/zero_pos.py 
+   for tint in $targetshutter
+   do if [ $tint == 32 ]
+      then tinteg="t50"
+      elif [ $tint == 48 ]
+      then tinteg="t2000"
+      fi
+      # set cameras shutterspeed
+      gphoto2 --port $port60deg --set-config shutterspeed=$tint &
+      gphoto2 --port $portnadir --set-config shutterspeed=$tint
+      /bin/sleep 2.0         
+      # loop over angles in degrees (5 values to fill half of a sphere)
+      totang=0
+      for a in $targetazim
+         # reading temperatures in cam assembly and hub
+         # and start heater if required
+         # camera assembly sensor connected to gpio1 and hub sensor in gpio7
+      do THub=9999
+         TCam=9999
+         >/home/sand/bidon.tmp
          python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
-         read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
-      else
-         read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
-      fi
-      echo "THub:" $THub "Tmin:" $TlimHub
-      echo "TCam:" $TCam "Tmin:" $TlimCam
-      if [ $TCam -lt $TlimCam ]
-      then echo "Cam heating on"
-           /usr/local/bin/relay.py $gpioTCam1 1
-           /usr/local/bin/relay.py $gpioTCam2 1
-      else echo "Cam heating off"
-          /usr/local/bin/relay.py $gpioTCam1 0
-          /usr/local/bin/relay.py $gpioTCam2 0
-      fi
-#****ceci est ajoute en lien avec le fait de retirer l'ajustement avec le heading
-      let angle=(a-totang*360/750)*750/360
-      /usr/local/bin/rotate.py $angle 1
-      let 'totang=totang+angle'
-      echo "Move to azimuth:" $a  "with " $angle
-#****        
-      for tint in $targetshutter
-      do if [ $tint == 32 ]
-         then tinteg="_t50"
-         elif [ $tint == 48 ]
-         then tinteg="_t2000"
+         if [ ! -s bidon.tmp ]
+         then /usr/local/bin/relay.py $gpioDHTpow 0
+              /bin/sleep 0.5
+              /usr/local/bin/relay.py $gpioDHTpow 1
+              /bin/sleep 1
+              python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
+             read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
+         else
+             read stateT TCam bidon THub bidon < /home/sand/bidon.tmp
          fi
-         # set cameras shutterspeed
-         gphoto2 --port $port60deg --set-config shutterspeed=$tint &
-         gphoto2 --port $portnadir --set-config shutterspeed=$tint
-         /bin/sleep 2.0         
+         echo "THub:" $THub "Tmin:" $TlimHub
+         echo "TCam:" $TCam "Tmin:" $TlimCam
+         if [ $TCam -lt $TlimCam ]
+         then echo "Cam heating on"
+              /usr/local/bin/relay.py $gpioTCam1 1
+              /usr/local/bin/relay.py $gpioTCam2 1
+         else echo "Cam heating off"
+              /usr/local/bin/relay.py $gpioTCam1 0
+              /usr/local/bin/relay.py $gpioTCam2 0
+         fi
+         let angle=(a-totang*360/750)*750/360
+         /usr/local/bin/rotate.py $angle 1
+         let 'totang=totang+angle'
+         echo "Move to azimuth:" $a  "with " $angle " steps"
          y=`date +%Y`
          mo=`date +%m`
          d=`date +%d`
@@ -237,35 +235,10 @@ do time1=`date +%s` # initial time
          # setting file names
          nomfich60deg=$datetime"_60deg_"$a"_"$tinteg".arw"
          nomfichnadir=$datetime"_nadir_"$a"_"$tinteg".arw"
-#         nrot=0
-#         deltaa=10
-#         while [ ${deltaa/#-} -ge 2  ] && [ $nrot -lt 5 ]
-#         # determine rotation angle for first guess rotation angle
-#         do /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-#            read bidon azim0 bidon < /home/sand/bidon1.tmp
-#            echo "Heading = " $azim0 " deg"
-#            let deltaa=(a-azim0)
-#            if [ $deltaa -gt 180 ] 
-#            then let deltaa=deltaa-360
-#            elif [ $deltaa -lt -180 ]
-#            then let deltaa=360+deltaa
-#            fi
-#            let nrot=nrot+1
-#            let 'angle=deltaa*750/360'  # convert delta_angle into delta_stepper  
-#            let 'totang=totang+angle'
-#            # goto first guess angle - rotate the camera assembly
-#            echo "Move to azimuth (guess #"$nrot"):" $a  "with " $angle
-#            /usr/local/bin/rotate.py $angle 1
-#         done
-
-
-
-                  
          # refresh to the actual value of heading angle where pictures are acquired
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
          read bidon azimnow bidon < /home/sand/bidon1.tmp
          echo "Shooting heading = " $azimnow " deg"
-         
          # acquisition de l'image 60deg  
          echo "Taking 60deg shot"
          gphoto2 --port $port60deg --capture-image-and-download --filename $nomfich60deg  &
@@ -295,11 +268,7 @@ do time1=`date +%s` # initial time
               /usr/sbin/reboot
          fi
          rm -f *.arw
-         
-
-         
-      done
-
+       done
    done
    # go back to zero angle relative to the control box framework
    let totang=-totang
