@@ -154,9 +154,10 @@ do time1=`date +%s` # initial time
    if [  $nobs != 9999 ] 
    then let i=i+1 #   never ending loop
    fi
-   echo "Move to zero position" $a
+
    for tint in $targetshutter
    do # goto zero position
+      echo "Move to zero position" $a      
       /usr/local/bin/zero_pos.py
       totang=0
       if [ $tint == 32 ]
