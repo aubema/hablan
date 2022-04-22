@@ -188,7 +188,7 @@ do time1=`date +%s` # initial time
           /usr/local/bin/relay.py $gpioTCam2 0
       fi
 #****ceci est ajoute en lien avec le fait de retirer l'ajustement avec le heading
-      let angle=(a-totang)*750/360
+      let angle=(a-totang*360/750)*750/360
       /usr/local/bin/rotate.py $angle 1
       let 'totang=totang+angle'
       echo "Move to azimuth:" $a  "with " $angle
