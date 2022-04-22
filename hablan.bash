@@ -155,10 +155,11 @@ do time1=`date +%s` # initial time
    then let i=i+1 #   never ending loop
    fi
    echo "Move to zero position" $a
-   # goto zero position
-   /usr/local/bin/zero_pos.py 
    for tint in $targetshutter
-   do if [ $tint == 32 ]
+   do # goto zero position
+      /usr/local/bin/zero_pos.py
+      totang=0
+      if [ $tint == 32 ]
       then tinteg="t50"
       elif [ $tint == 48 ]
       then tinteg="t2000"
@@ -168,13 +169,12 @@ do time1=`date +%s` # initial time
       gphoto2 --port $portnadir --set-config shutterspeed=$tint
       /bin/sleep 2.0         
       # loop over angles in degrees (5 values to fill half of a sphere)
-      totang=0
       for a in $targetazim
+      do THub=9999
+         TCam=9999
          # reading temperatures in cam assembly and hub
          # and start heater if required
          # camera assembly sensor connected to gpio1 and hub sensor in gpio7
-      do THub=9999
-         TCam=9999
          >/home/sand/bidon.tmp
          python3 /usr/local/bin/read2DHT.py | sed 's/\./ /g' > /home/sand/bidon.tmp
          if [ ! -s bidon.tmp ]
