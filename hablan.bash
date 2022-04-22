@@ -270,10 +270,11 @@ do time1=`date +%s` # initial time
          fi
          rm -f *.arw
        done
+       # go back to zero angle relative to the control box framework
+       let totang=-totang
+       /usr/local/bin/rotate.py $totang 1
    done
-   # go back to zero angle relative to the control box framework
-   let totang=-totang
-   /usr/local/bin/rotate.py $totang 1
+
    time2=`date +%s`
    let idle=20-$time2+$time1  # one measurement every 20 sec
    echo $idle $time1 $time2
