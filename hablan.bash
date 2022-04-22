@@ -238,6 +238,7 @@ do time1=`date +%s` # initial time
          # refresh to the actual value of heading angle where pictures are acquired
          /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
          read bidon azimnow bidon < /home/sand/bidon1.tmp
+         /bin/sleep 2.0
          echo "Shooting heading = " $azimnow " deg"
          # acquisition de l'image 60deg  
          echo "Taking 60deg shot"
@@ -246,7 +247,7 @@ do time1=`date +%s` # initial time
          echo "Taking nadir shot" 
          gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
          # waiting for the images to be saved
-         /bin/sleep 8.0
+         /bin/sleep 6.0
          #
          # check if the image are downloaded and otherwise off/on on their power adaptors
          if [ -f $nomfich60deg ] && [ -f $nomfichnadir ]
