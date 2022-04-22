@@ -202,6 +202,7 @@ do time1=`date +%s` # initial time
          # set cameras shutterspeed
          gphoto2 --port $port60deg --set-config shutterspeed=$tint &
          gphoto2 --port $portnadir --set-config shutterspeed=$tint
+         /bin/sleep 2.0         
          y=`date +%Y`
          mo=`date +%m`
          d=`date +%d`
