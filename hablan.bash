@@ -60,8 +60,8 @@ gpiorelaycam=22
 gpioTCam2=04
 gpioTCam1=23  # value of 1 means on
 gpioDHTpow=24 # value of 1 means on
-TlimCam=12   # minimum temperature in camera assembly
-TlimHub=12   # minimum temperature in the hub
+TlimCam=8   # minimum temperature in camera assembly
+TlimHub=8   # minimum temperature in the hub
 # number of images to acquire; if 9999 then infinity
 nobs=9999
 serialnadir="00000000000000003282741003379044"  # nadir view camera serial number
@@ -248,7 +248,7 @@ do time1=`date +%s` # initial time
          echo "Taking nadir shot" 
          gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
          # waiting for the images to be saved
-         /bin/sleep 6.0
+         /bin/sleep 3.0
          #
          # check if the image are downloaded and otherwise off/on on their power adaptors
          if [ -f $nomfich60deg ] && [ -f $nomfichnadir ]
