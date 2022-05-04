@@ -21,8 +21,6 @@
 # =============================
 # Calibrate heading sensor
 #
-i=0
-delta=75  # correspond to 36 deg steps
 y=`date +%Y`
 mo=`date +%m`
 d=`date +%d`
@@ -52,18 +50,16 @@ if [ ! -d /home/sand/backup/$y/$mo/$d ]
 then /bin/mkdir /home/sand/backup/$y/$mo/$d
 fi
 datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
-while [ $i -le 750 ]
-do let angle=i*360/750
+for i in {0..35}
+do let angle=i*10
+   let delta=angle*750/360
+   /usr/local/bin/zero_pos.py
+   /usr/local/bin/rotate.py $delta 1
+   /bin/sleep 2   
    /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
    read bidon azim xx yy bidon < /home/sand/bidon1.tmp
-   if [ $i -eq 0 ]
-   then echo $angle $xx $yy $azim > /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
-   else
-        echo $angle $xx $yy $azim >> /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
-   fi
+   echo $angle $xx $yy $azim >> /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
+   let delta=-delta
    /usr/local/bin/rotate.py $delta 1
-   /bin/sleep 2
-   let i=i+delta
 done
-/usr/local/bin/rotate.py -750 1
 cp -f /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt" /home/sand/backup/$y/$mo/$d/$datetime"_heading_calib.txt"
