@@ -50,7 +50,7 @@ if [ ! -d /home/sand/backup/$y/$mo/$d ]
 then /bin/mkdir /home/sand/backup/$y/$mo/$d
 fi
 datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
-for i in {0..35}
+for i in {-17..18}
 do let angle=i*10
    let delta=angle*750/360
    /usr/local/bin/zero_pos.py
