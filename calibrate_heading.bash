@@ -50,6 +50,7 @@ if [ ! -d /home/sand/backup/$y/$mo/$d ]
 then /bin/mkdir /home/sand/backup/$y/$mo/$d
 fi
 datetime=$y"-"$mo"-"$d"_"$H"-"$M"-"$S
+echo "Angle Azimuth Bx By Bz" > /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
 for i in {-17..18}
 do let angle=i*10
    let delta=angle*750/360
@@ -57,8 +58,8 @@ do let angle=i*10
    /usr/local/bin/rotate.py $delta 1
    /bin/sleep 2   
    /usr/local/bin/heading_angle.py > /home/sand/bidon1.tmp
-   read bidon azim xx yy bidon < /home/sand/bidon1.tmp
-   echo $angle $xx $yy $azim >> /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
+   read bidon azim xx yy zz bidon < /home/sand/bidon1.tmp
+   echo $angle $azim $xx $yy $zz >> /var/www/html/data/$y/$mo/$d/$datetime"_heading_calib.txt"
    let delta=-delta
    /usr/local/bin/rotate.py $delta 1
 done
