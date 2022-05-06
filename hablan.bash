@@ -131,6 +131,8 @@ gphoto2 --port $portnadir --set-config exposurecompensation=0 &
 gphoto2 --port $port60deg --set-config exposurecompensation=0
 gphoto2 --port $portnadir --set-config whitebalance=1 &
 gphoto2 --port $port60deg --set-config whitebalance=1
+# calibrate the magnetic sensor
+/usr/local/bin/calibrate_heading.bash
 #
 # main loop
 #
