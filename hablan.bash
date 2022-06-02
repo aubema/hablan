@@ -133,8 +133,9 @@ gphoto2 --port $portnadir --set-config whitebalance=1 &
 gphoto2 --port $port60deg --set-config whitebalance=1
 # calibrate the magnetic sensor 3 times
 /usr/local/bin/calibrate_heading.bash
+/bin/sleep 30
 /usr/local/bin/calibrate_heading.bash
-/usr/local/bin/calibrate_heading.bash
+/bin/sleep 30
 #
 # main loop
 #
@@ -172,7 +173,7 @@ do time1=`date +%s` # initial time
       # set cameras shutterspeed
       gphoto2 --port $port60deg --set-config shutterspeed=$tint &
       gphoto2 --port $portnadir --set-config shutterspeed=$tint
-      /bin/sleep 2.0         
+      /bin/sleep 3.0         
       # loop over angles in degrees (5 values to fill half of a sphere)
       for a in $targetazim
       do THub=9999
@@ -252,7 +253,7 @@ do time1=`date +%s` # initial time
          echo "Taking nadir shot" 
          gphoto2 --port $portnadir --capture-image-and-download --filename $nomfichnadir &
          # waiting for the images to be saved
-         /bin/sleep 3.0
+         /bin/sleep 3.5
          #
          # check if the image are downloaded and otherwise off/on on their power adaptors
          if [ -f $nomfich60deg ] && [ -f $nomfichnadir ]
