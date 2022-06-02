@@ -110,6 +110,8 @@ read bidon bidon bidon port2 bidon < /home/sand/bidon.tmp
 # find the port of the nadir view camera
 gphoto2 --port $port1 --summary | grep Serial > /home/sand/bidon.tmp
 read bidon bidon serial bidon < /home/sand/bidon.tmp
+# wait for connexion with the cameras
+/bin/sleep 15
 if [ $serial == $serialnadir ]
 then portnadir=$port1
      port60deg=$port2
@@ -132,10 +134,10 @@ gphoto2 --port $port60deg --set-config exposurecompensation=0
 gphoto2 --port $portnadir --set-config whitebalance=1 &
 gphoto2 --port $port60deg --set-config whitebalance=1
 # calibrate the magnetic sensor 3 times
-/usr/local/bin/calibrate_heading.bash
-/bin/sleep 30
-/usr/local/bin/calibrate_heading.bash
-/bin/sleep 30
+#/usr/local/bin/calibrate_heading.bash
+#/bin/sleep 30
+#/usr/local/bin/calibrate_heading.bash
+#/bin/sleep 30
 #
 # main loop
 #
@@ -173,7 +175,7 @@ do time1=`date +%s` # initial time
       # set cameras shutterspeed
       gphoto2 --port $port60deg --set-config shutterspeed=$tint &
       gphoto2 --port $portnadir --set-config shutterspeed=$tint
-      /bin/sleep 6.0         
+      /bin/sleep 4        
       # loop over angles in degrees (5 values to fill half of a sphere)
       for a in $targetazim
       do THub=9999
@@ -270,8 +272,9 @@ do time1=`date +%s` # initial time
               rm -f $nomfichnadir
          else echo "Reset cameras and reboot..."
               /usr/local/bin/relay.py $gpiorelaycam 0
-              /bin/sleep 1
+              /bin/sleep 2              
               /usr/local/bin/relay.py $gpiorelaycam 1
+              /bin/sleep 2             
               /usr/sbin/reboot
          fi
          rm -f *.arw
