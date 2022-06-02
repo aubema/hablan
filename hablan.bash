@@ -173,7 +173,7 @@ do time1=`date +%s` # initial time
       # set cameras shutterspeed
       gphoto2 --port $port60deg --set-config shutterspeed=$tint &
       gphoto2 --port $portnadir --set-config shutterspeed=$tint
-      /bin/sleep 3.0         
+      /bin/sleep 6.0         
       # loop over angles in degrees (5 values to fill half of a sphere)
       for a in $targetazim
       do THub=9999
