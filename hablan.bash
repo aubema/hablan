@@ -83,8 +83,8 @@ targetazim=" -144 -72 0 72 144 "
 #
 # activate the camera power with the relay gpio 14 and 15
 # wait for the gps startup
-echo "Waiting 15 seconds for the gps & cameras startup"
-/bin/sleep 15
+echo "Waiting 30 seconds for the gps & cameras startup"
+/bin/sleep 30
 gphoto2 --auto-detect
 # reset the gps
 killall -9 gpsd
@@ -93,6 +93,7 @@ echo "Set gps in airborne mode"
 # config string obtained from u-blox ucenter app on windows message window, UBX, CFG, NAV5
 gpsctl -D 5 -x "\xB5\x62\x06\x24\x24\x00\xFF\xFF\x06\x03\x00\x00\x00\x00\x10\x27\x00\x00\x05\x00\xFA\x00\xFA\x00\x64\x00\x2C\x01\x00\x3C\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x52\xE8" /dev/$gpsport
 # gpsd will automatically restart after a few seconds
+echo "Waiting 10 more seconds"
 /bin/sleep 10
 # find ports to the cameras
 echo "Looking for cameras ports"
@@ -135,9 +136,11 @@ gphoto2 --port $portnadir --set-config whitebalance=1 &
 gphoto2 --port $port60deg --set-config whitebalance=1
 # calibrate the magnetic sensor 3 times
 #/usr/local/bin/calibrate_heading.bash
-#/bin/sleep 30
+#/bin/sleep 15
 #/usr/local/bin/calibrate_heading.bash
-#/bin/sleep 30
+#/bin/sleep 15
+#/usr/local/bin/calibrate_heading.bash
+#/bin/sleep 15
 #
 # main loop
 #
