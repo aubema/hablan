@@ -122,6 +122,7 @@ fi
 # set iso to 6400 for both cameras
 gphoto2 --port $portnadir --set-config iso=20 &
 gphoto2 --port $port60deg --set-config iso=20
+/bin/sleep 3
 gphoto2 --port $portnadir --set-config imagequality=3 &
 gphoto2 --port $port60deg --set-config imagequality=3
 gphoto2 --port $portnadir --set-config aspectratio=0 &
