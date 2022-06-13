@@ -141,6 +141,7 @@ gphoto2 --port $port60deg --set-config whitebalance=1
 # set iso to 6400 for both cameras
 gphoto2 --port $portnadir --set-config iso=20 &
 gphoto2 --port $port60deg --set-config iso=20
+/bin/sleep 1
 # calibrate the magnetic sensor 3 times
 #/usr/local/bin/calibrate_heading.bash
 #/bin/sleep 15
