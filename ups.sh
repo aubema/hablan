@@ -1,19 +1,19 @@
-#!/usr/bin/sh
+#!/bin/bash
 
 #GPIO17 (input) used to read current power status. 
 #0 - normal (or battery power switched on manually). 
 #1 - power fault, swithced to battery. 
-echo 17 > /sys/class/gpio/export;
-echo in > /sys/class/gpio/gpio17/direction;
+echo "17" > /sys/class/gpio/export;
+echo "in" > /sys/class/gpio/gpio17/direction;
 
 #GPIO27 (input) used to indicate that UPS is online
-echo 27 > /sys/class/gpio/export;
-echo in > /sys/class/gpio/gpio27/direction;
+echo "27" > /sys/class/gpio/export;
+echo "in" > /sys/class/gpio/gpio27/direction;
 
 #GPIO18 used to inform UPS that Pi is still working. After power-off this pin returns to Hi-Z state. 
-echo 18 > /sys/class/gpio/export;
-echo out > /sys/class/gpio/gpio18/direction;
-echo 0 > /sys/class/gpio/gpio18/value;
+echo "18" > /sys/class/gpio/export;
+echo "out" > /sys/class/gpio/gpio18/direction;
+echo "0" > /sys/class/gpio/gpio18/value;
 
 power_timer=0;
 inval_power="0";
@@ -62,11 +62,11 @@ do
 		power_timer=0;
 	fi
 	
-	#If power was not restored in 1 seconds
-	if (( "$power_timer" == 10 )); then 
+	#If power was not restored in 60 seconds
+	if (( "$power_timer" == 600 )); then 
 		#echo $power_timer;
 		echo "Powering off..."
-#		sleep 2;
+		sleep 2;
 		systemctl poweroff; #turn off
 		exit;
 	fi	
